@@ -1,6 +1,6 @@
 'use strict'
 
-/*global $ */
+/* global $ */
 import cx from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'

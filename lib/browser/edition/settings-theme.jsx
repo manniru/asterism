@@ -1,6 +1,6 @@
 'use strict'
 
-/*global $ */
+/* global $ */
 import cx from 'classnames'
 import objectPath from 'object-path'
 import PropTypes from 'prop-types'
