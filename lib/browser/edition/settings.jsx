@@ -1,6 +1,6 @@
 'use strict'
 
-/* global $, panels */
+/* global $, plugins */
 import cx from 'classnames'
 import debounce from 'debounce'
 import PropTypes from 'prop-types'
@@ -32,11 +32,9 @@ class Settings extends React.Component {
     }
 
     // Plugin settings panels
-    const pluginSettingsPanels = (process.env.ASTERISM_SETTINGS_PANELS || []).map((toRequire) => {
-      return panels[toRequire].default
+    this.pluginSettingsPanels = (process.env.ASTERISM_SETTINGS_PANELS || []).map((toRequire) => {
+      return plugins.settingsPanels[toRequire].default
     })
-
-    console.log(pluginSettingsPanels, 'MERCI !') // TODO !1: restart from here: insert these classes into render()
 
     // debounced onresize event
     $(window).one('resize', debouncedResizeHandler(this, 1080 / Math.pow(this.props.animationLevel, 2)))
@@ -86,6 +84,11 @@ class Settings extends React.Component {
               showRefreshButton={() => this.setState({ showRefreshButton: true })} />
             <UserInterface localStorage={localStorage} theme={theme}
               showRefreshButton={() => this.setState({ showRefreshButton: true })} />
+
+            {this.pluginSettingsPanels.map((Panel, idx) => (
+              <Panel key={idx} localStorage={localStorage} theme={theme}
+                showRefreshButton={() => this.setState({ showRefreshButton: true })} />
+            ))}
           </div>
 
         </div>
