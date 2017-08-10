@@ -1,6 +1,6 @@
 'use strict'
 
-/*global $ */
+/* global $, plugins */
 import cx from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -26,21 +26,18 @@ class MainComponent extends React.Component {
     this.state = {
       editMode: false,
       animationLevel: parseInt(props.localStorage.getItem('settings-animation-level') || 3), // 1..3
-      addItems: { // TODO !1: async loading... only when state.editMode turns ON
-        domotics: [],
-        security: [],
-        screening: [],
-        communication: [],
-        information: [],
-        development: [
-          {
-            title: 'Debug log',
-            isNew: true
-          },
-          {
-            title: 'Other old thing'
-          }
-        ]
+      itemFactories: () => { // must be kept lazy
+        if (this._pluginItemFactories) {
+          return this._pluginItemFactories
+        }
+        this._pluginItemFactories = (process.env.ASTERISM_ITEM_FACTORIES || []).map((toRequire) => {
+          const Clazz = plugins.itemFactories[toRequire].default
+          return new Clazz({
+            localStorage: props.localStorage.createSubStorage(toRequire),
+            serverStorage: props.serverStorage.createSubStorage(toRequire),
+            mainState: this.state }) // context given here
+        })
+        return this._pluginItemFactories
       }
     }
 
@@ -55,7 +52,7 @@ class MainComponent extends React.Component {
 
   render () {
     const { theme, localStorage, serverStorage } = this.props
-    const { editMode, animationLevel, addItems } = this.state
+    const { editMode, animationLevel, itemFactories } = this.state
     return (
       <div className={cx('asterism', theme.backgrounds.body)}>
         <Navbar fixed brand='&nbsp;&nbsp;⁂&nbsp;&nbsp;' href={null} right
@@ -78,9 +75,9 @@ class MainComponent extends React.Component {
 
         {animationLevel >= 3 ? (
           <TransitionGroup>
-            {editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme} items={addItems} />) : null}
+            {editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme} itemFactories={itemFactories()} />) : null}
           </TransitionGroup>
-        ) : (editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme} items={addItems} />) : null)}
+        ) : (editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme} itemFactories={itemFactories()} />) : null)}
 
         {editMode ? (
           <Settings animationLevel={animationLevel} localStorage={localStorage} serverStorage={serverStorage}

@@ -11,38 +11,52 @@ const categories = [
     id: 'domotics',
     title: 'Domotics',
     icon: 'touch_app',
-    condition: true
+    condition: true,
+    additionalItems: []
   },
   {
     id: 'security',
     title: 'Security & access',
     icon: 'notifications_active',
-    condition: true
+    condition: true,
+    additionalItems: []
   },
   {
     id: 'screening',
     title: 'Screening & safety',
     icon: 'videocam',
-    condition: true
+    condition: true,
+    additionalItems: []
   },
   {
     id: 'communication',
     title: 'Communication',
     icon: 'question_answer',
-    condition: true
+    condition: true,
+    additionalItems: []
   },
   {
     id: 'information',
     title: 'Information',
     icon: 'info',
-    condition: true
+    condition: true,
+    additionalItems: []
   },
   {
     id: 'development',
     title: 'Dev tools',
     icon: 'bug_report',
     condition: (process.env.NODE_ENV !== 'production'),
-    className: 'purple'
+    className: 'purple white-text',
+    additionalItems: [
+      {
+        title: 'Debug log',
+        isNew: true
+      },
+      {
+        title: 'Other old thing'
+      }
+    ]
   }
 ]
 
@@ -126,11 +140,18 @@ class AddCategoryButtons extends React.Component {
   }
 
   render () {
-    const { theme, animationLevel, items } = this.props
-    const { modal } = this.state
+    const { theme, animationLevel, itemFactories } = this.props
+    const { modal, clazz } = this.state
     const waves = animationLevel >= 2 ? 'light' : undefined
     const modalCategory = modal ? categories.find((i) => i.id === modal) : null
-    const modalItems = items[modal] || []
+
+    categories.forEach((category) => { category.additionalItems = [] }) // reset items
+    itemFactories.forEach((factory) => {
+      categories.forEach((category) => {
+        category.additionalItems = category.additionalItems.concat(factory.getAdditionalItems(category.id))
+      })
+    })
+
     return (
       <div>
         {modal ? (
@@ -138,18 +159,23 @@ class AddCategoryButtons extends React.Component {
             <div className='modal-content'>
               <div className={cx('coloring-header', { [modalCategory.className || theme.backgrounds.card]: animationLevel < 3 })}>
                 {animationLevel >= 3 ? (<div className={cx('ripple', modalCategory.className || theme.backgrounds.card)} />) : null}
-                <div>
+                <div className={animationLevel >= 3 && (modalCategory.className || theme.backgrounds.card).endsWith('white-text') ? 'white-text' : null}>
                   <h4>
                     <Icon small>{modalCategory.icon}</Icon>
                     {modalCategory.title}
                   </h4>
                 </div>
               </div>
-              <ul>
-                {modalItems.map((item, idx) => (
-                  <li key={idx}>{item.title}</li>
+              <div className='collection additional-items-list'>
+                {modalCategory.additionalItems.map((item, idx) => (
+                  <a className='collection-item avatar lighter-background' key={idx} href='#'>
+                    <Icon className='circle'>{item.icon || modalCategory.icon}</Icon>
+                    <h4 className='title'>{item.name}</h4>
+                    <p>{item.description}</p>
+                    <div className='secondary-content'><Icon circle>insert_chart</Icon></div>
+                  </a>
                 ))}
-              </ul>
+              </div>
             </div>
             <div className={cx('modal-footer', theme.backgrounds.body)}>
               <a href='#!' className='modal-action modal-close waves-effect waves-light btn-flat'>Close</a>
@@ -161,12 +187,12 @@ class AddCategoryButtons extends React.Component {
           <div id='category-modal-bullet' className={cx('btn-floating', (modalCategory && modalCategory.className) || theme.backgrounds.card)} />
         ) : null}
 
-        <Button large floating fab='vertical' icon='add_box' waves={waves} className={cx(theme.actions.edition, this.state.clazz)}>
+        <Button large floating fab='vertical' icon='add_box' waves={waves} className={cx(theme.actions.edition, clazz)}>
           {Array.from(categories).reverse().map((value, idx) => (
             value.condition ? (
               <Button key={idx}
                 floating icon={value.icon} waves={waves}
-                className={cx(value.className || theme.actions.secondary, { pulse: items[value.id].find((i) => i.isNew) })}
+                className={cx(value.className || theme.actions.secondary, { pulse: value.additionalItems.find((i) => i.isNew) })}
                 onClick={this.categorySelect.bind(this, value.id)}
               />
             ) : null
@@ -180,11 +206,11 @@ class AddCategoryButtons extends React.Component {
 AddCategoryButtons.propTypes = {
   theme: PropTypes.object.isRequired,
   animationLevel: PropTypes.number.isRequired,
-  items: PropTypes.object
+  itemFactories: PropTypes.array
 }
 
 AddCategoryButtons.defaultTypes = {
-  items: {}
+  itemFactories: []
 }
 
 export default AddCategoryButtons
