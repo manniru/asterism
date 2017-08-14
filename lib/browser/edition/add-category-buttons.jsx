@@ -6,6 +6,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Button, Icon } from 'react-materialize'
 
+import ItemSettingPanel from '../../plugins/item-setting-panel'
+
 const categories = [
   {
     id: 'domotics',
@@ -139,6 +141,15 @@ class AddCategoryButtons extends React.Component {
     })
   }
 
+  additionalItemSelect (additionalItem) {
+    const settingOrItem = additionalItem.instantiateNewItem()
+    if (settingOrItem instanceof ItemSettingPanel) {
+      // TODO !3: this is a setting panel, do in another way
+    } else {
+      this.props.itemManager.addNewItem(settingOrItem)
+    }
+  }
+
   render () {
     const { theme, animationLevel, itemFactories } = this.props
     const { modal, clazz } = this.state
@@ -168,11 +179,11 @@ class AddCategoryButtons extends React.Component {
               </div>
               <div className='collection additional-items-list'>
                 {modalCategory.additionalItems.map((item, idx) => (
-                  <a className='collection-item avatar lighter-background' key={idx} href='#'>
+                  <a className='collection-item avatar lighter-background waves-effect waves-light' key={idx} href='#' onClick={this.additionalItemSelect.bind(this, item)}>
                     <Icon className='circle'>{item.icon || modalCategory.icon}</Icon>
                     <h4 className='title'>{item.name}</h4>
                     <p>{item.description}</p>
-                    <div className='secondary-content'><Icon circle>insert_chart</Icon></div>
+                    <div className='secondary-content'><Icon circle>insert_chart</Icon> TODO</div>
                   </a>
                 ))}
               </div>
@@ -206,6 +217,7 @@ class AddCategoryButtons extends React.Component {
 AddCategoryButtons.propTypes = {
   theme: PropTypes.object.isRequired,
   animationLevel: PropTypes.number.isRequired,
+  itemManager: PropTypes.object.isRequired,
   itemFactories: PropTypes.array
 }
 

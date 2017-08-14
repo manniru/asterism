@@ -12,7 +12,7 @@ import AddCategoryButtons from './edition/add-category-buttons'
 import DefaultMaterialTheme from './default-material-theme'
 import DefaultLocalStorage from './default-local-storage'
 import DefaultServerStorage from './default-server-storage'
-import OrderHandler from './order-handler'
+import ItemManager from './item-manager'
 import Settings from './edition/settings'
 
 import 'react-gridifier/dist/styles.css'
@@ -38,21 +38,23 @@ class MainComponent extends React.Component {
             mainState: this.state }) // context given here
         })
         return this._pluginItemFactories
-      }
+      },
+      items: [] // TODO !0: how to init it?
     }
 
-    this.orderHandler = new OrderHandler(props.localStorage, 'order-handler', props.serverStorage.getItem('order-handler'))
+    this.itemManager = new ItemManager(props.localStorage, props.serverStorage, this)
   }
 
   componentDidMount () {
     // dynamic CSS for background color
     const bgColor = $('div.asterism').css('background-color')
     $('div.asterism').css('box-shadow', `0 2000px 0 2000px ${bgColor}`)
+    $('div.asterism .navbar-fixed ul.side-nav').css('background-color', bgColor)
   }
 
   render () {
     const { theme, localStorage, serverStorage } = this.props
-    const { editMode, animationLevel, itemFactories } = this.state
+    const { editMode, animationLevel, itemFactories, items } = this.state
     return (
       <div className={cx('asterism', theme.backgrounds.body)}>
         <Navbar fixed brand='&nbsp;&nbsp;⁂&nbsp;&nbsp;' href={null} right
@@ -60,35 +62,45 @@ class MainComponent extends React.Component {
           className={cx({ [theme.backgrounds.card]: !editMode, [theme.backgrounds.editing]: editMode })}
         >
           {editMode ? (
-            <NavItem href='#settings-modal'>
+            <NavItem onClick={this.openSettingsModal.bind(this)} className='waves-effect waves-light'>
               <Icon>settings</Icon>
               <span className='hide-on-large-only'>Settings</span>
             </NavItem>
           ) : null}
-          <NavItem onClick={this.toggleEditMode.bind(this)}>
+          <NavItem onClick={this.toggleEditMode.bind(this)} className='waves-effect waves-light'>
             <Icon>edit</Icon>
             <span className='hide-on-large-only'>{editMode ? 'End edition' : 'Edit mode'}</span>
           </NavItem>
         </Navbar>
 
-        <Gridifier editable={editMode} sortDispersion orderHandler={this.orderHandler} />
+        <Gridifier editable={editMode} sortDispersion orderHandler={this.itemManager.orderHandler}>
+          {items}
+        </Gridifier>
 
         {animationLevel >= 3 ? (
           <TransitionGroup>
-            {editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme} itemFactories={itemFactories()} />) : null}
+            {editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme}
+              itemManager={this.itemManager} itemFactories={itemFactories()} />) : null}
           </TransitionGroup>
-        ) : (editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme} itemFactories={itemFactories()} />) : null)}
+        ) : (editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme}
+          itemManager={this.itemManager} itemFactories={itemFactories()} />) : null)}
 
         {editMode ? (
           <Settings animationLevel={animationLevel} localStorage={localStorage} serverStorage={serverStorage}
-            orderHandler={this.orderHandler} theme={theme} />
+            orderHandler={this.itemManager.orderHandler} theme={theme} />
         ) : null}
       </div>
     )
   }
 
   toggleEditMode () {
+    $('#nav-mobile.side-nav').sideNav('hide')
     this.setState({ editMode: !this.state.editMode })
+  }
+
+  openSettingsModal () {
+    $('#nav-mobile.side-nav').sideNav('hide')
+    $('#settings-modal').modal('open')
   }
 }
 

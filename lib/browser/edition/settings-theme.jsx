@@ -5,7 +5,7 @@ import cx from 'classnames'
 import objectPath from 'object-path'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { CirclePicker } from 'react-color' // FIXME !0: too buggy! Don't knnow why...
+import { CirclePicker } from 'react-color' // FIXME !0: too buggy! Don't know why...
 // const CirclePicker = require('react-color/lib/components/circle/Circle').default
 import { Button, Icon } from 'react-materialize'
 
