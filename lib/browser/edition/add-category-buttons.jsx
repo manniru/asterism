@@ -142,11 +142,13 @@ class AddCategoryButtons extends React.Component {
   }
 
   additionalItemSelect (additionalItem) {
+    $('#category-modal').modal('close')
     const settingOrItem = additionalItem.instantiateNewItem()
     if (settingOrItem instanceof ItemSettingPanel) {
-      // TODO !3: this is a setting panel, do in another way
+      // TODO !3: this is a setting panel, show it (animation from clicked button to setting panel ?)
     } else {
-      this.props.itemManager.addNewItem(settingOrItem)
+      this.props.itemManager.addNewItem(settingOrItem, additionalItem.itemFactory)
+      // TODO !3: animation from clicked button to the new item in the grid ?
     }
   }
 
@@ -179,7 +181,8 @@ class AddCategoryButtons extends React.Component {
               </div>
               <div className='collection additional-items-list'>
                 {modalCategory.additionalItems.map((item, idx) => (
-                  <a className='collection-item avatar lighter-background waves-effect waves-light' key={idx} href='#' onClick={this.additionalItemSelect.bind(this, item)}>
+                  <a className='collection-item avatar lighter-background waves-effect waves-light' key={idx} href='#'
+                    onClick={this.additionalItemSelect.bind(this, item)}>
                     <Icon className='circle'>{item.icon || modalCategory.icon}</Icon>
                     <h4 className='title'>{item.name}</h4>
                     <p>{item.description}</p>

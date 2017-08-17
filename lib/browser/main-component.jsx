@@ -1,6 +1,6 @@
 'use strict'
 
-/* global $, plugins */
+/* global $, plugins, process */
 import cx from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -23,6 +23,10 @@ const localStorage = new DefaultLocalStorage('asterism')
 class MainComponent extends React.Component {
   constructor (props) {
     super(props)
+
+    // Instantiate orderHandler and initial items for this.state (need to be sync)
+    this.itemManager = new ItemManager(props.localStorage, props.serverStorage, this)
+
     this.state = {
       editMode: false,
       animationLevel: parseInt(props.localStorage.getItem('settings-animation-level') || 3), // 1..3
@@ -32,17 +36,18 @@ class MainComponent extends React.Component {
         }
         this._pluginItemFactories = (process.env.ASTERISM_ITEM_FACTORIES || []).map((toRequire) => {
           const Clazz = plugins.itemFactories[toRequire].default
-          return new Clazz({
+          const factory = new Clazz({
             localStorage: props.localStorage.createSubStorage(toRequire),
             serverStorage: props.serverStorage.createSubStorage(toRequire),
             mainState: this.state }) // context given here
+          factory.id = toRequire
+          Object.freeze(factory) // protection against hacks
+          return factory
         })
         return this._pluginItemFactories
       },
-      items: [] // TODO !0: how to init it?
+      items: this.itemManager.getAllItems()
     }
-
-    this.itemManager = new ItemManager(props.localStorage, props.serverStorage, this)
   }
 
   componentDidMount () {
@@ -87,7 +92,7 @@ class MainComponent extends React.Component {
 
         {editMode ? (
           <Settings animationLevel={animationLevel} localStorage={localStorage} serverStorage={serverStorage}
-            orderHandler={this.itemManager.orderHandler} theme={theme} />
+            itemManager={this.itemManager} theme={theme} />
         ) : null}
       </div>
     )
