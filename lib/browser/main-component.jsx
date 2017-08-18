@@ -30,23 +30,18 @@ class MainComponent extends React.Component {
     this.state = {
       editMode: false,
       animationLevel: parseInt(props.localStorage.getItem('settings-animation-level') || 3), // 1..3
-      itemFactories: () => { // must be kept lazy
-        if (this._pluginItemFactories) {
-          return this._pluginItemFactories
-        }
-        this._pluginItemFactories = (process.env.ASTERISM_ITEM_FACTORIES || []).map((toRequire) => {
-          const Clazz = plugins.itemFactories[toRequire].default
-          const factory = new Clazz({
-            localStorage: props.localStorage.createSubStorage(toRequire),
-            serverStorage: props.serverStorage.createSubStorage(toRequire),
-            mainState: this.state }) // context given here
-          factory.id = toRequire
-          Object.freeze(factory) // protection against hacks
-          return factory
-        })
-        return this._pluginItemFactories
-      },
-      items: this.itemManager.getAllItems()
+      itemFactories: (process.env.ASTERISM_ITEM_FACTORIES || []).map((toRequire) => {
+        const Clazz = plugins.itemFactories[toRequire].default
+        console.log(Clazz, 'N IS HERE', plugins.itemFactories[toRequire]) // TODO !0: c'est vide en mode dist !!!
+        const factory = new Clazz({
+          localStorage: props.localStorage.createSubStorage(toRequire),
+          serverStorage: props.serverStorage.createSubStorage(toRequire),
+          mainState: this.state }) // context given here
+        factory.id = toRequire
+        Object.freeze(factory) // protection against hacks
+        return factory
+      }),
+      items: () => this.itemManager.getAllItems() // must be kept async for init case
     }
   }
 
@@ -79,16 +74,16 @@ class MainComponent extends React.Component {
         </Navbar>
 
         <Gridifier editable={editMode} sortDispersion orderHandler={this.itemManager.orderHandler}>
-          {items}
+          {items()}
         </Gridifier>
 
         {animationLevel >= 3 ? (
           <TransitionGroup>
             {editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme}
-              itemManager={this.itemManager} itemFactories={itemFactories()} />) : null}
+              itemManager={this.itemManager} itemFactories={itemFactories} />) : null}
           </TransitionGroup>
         ) : (editMode ? (<AddCategoryButtons animationLevel={animationLevel} theme={theme}
-          itemManager={this.itemManager} itemFactories={itemFactories()} />) : null)}
+          itemManager={this.itemManager} itemFactories={itemFactories} />) : null)}
 
         {editMode ? (
           <Settings animationLevel={animationLevel} localStorage={localStorage} serverStorage={serverStorage}
@@ -106,6 +101,10 @@ class MainComponent extends React.Component {
   openSettingsModal () {
     $('#nav-mobile.side-nav').sideNav('hide')
     $('#settings-modal').modal('open')
+  }
+
+  pushItems (items) {
+    this.setState({ items: () => items }) // TODO !0: ca plante ici !
   }
 }
 

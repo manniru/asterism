@@ -147,8 +147,9 @@ class AddCategoryButtons extends React.Component {
     if (settingOrItem instanceof ItemSettingPanel) {
       // TODO !3: this is a setting panel, show it (animation from clicked button to setting panel ?)
     } else {
-      this.props.itemManager.addNewItem(settingOrItem, additionalItem.itemFactory)
-      // TODO !3: animation from clicked button to the new item in the grid ?
+      const { item, preferredHeight, preferredWidth, settingsHandler } = settingOrItem
+      this.props.itemManager.addNewItem(item, preferredHeight, preferredWidth, settingsHandler, additionalItem.itemFactory.id)
+      // TODO !4: animation from clicked button to the new item in the grid ?
     }
   }
 

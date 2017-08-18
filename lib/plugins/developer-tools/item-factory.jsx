@@ -1,5 +1,7 @@
 'use strict'
 
+import React from 'react'
+
 import AdditionalItem from '../additional-item'
 
 class DeveloperToolsItemFactory {
@@ -16,11 +18,21 @@ class DeveloperToolsItemFactory {
   }
 
   instantiateNewItem (additionalItemId) {
-    // TODO !0: return a component (!0) OR a settings panel (!3)
+    // TODO !1: return an object with { item, h, w, settingPanel } OR an initial ItemSettingPanel instance instead
+    return {
+      item: <div>New: {additionalItemId}</div>,
+      preferredHeight: 1,
+      preferredWidth: 1,
+      settingPanel: null
+    }
   }
 
-  instantiateItem (additionalItemId, instanceId) {
-    // TODO !0: return an existing component
+  instantiateItem (instanceId) {
+    // TODO !1: return an existing component and its settingPanel
+    return {
+      item: <div>{instanceId}</div>,
+      settingPanel: null
+    }
   }
 }
 
