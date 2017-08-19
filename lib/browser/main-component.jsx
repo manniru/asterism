@@ -32,7 +32,6 @@ class MainComponent extends React.Component {
       animationLevel: parseInt(props.localStorage.getItem('settings-animation-level') || 3), // 1..3
       itemFactories: (process.env.ASTERISM_ITEM_FACTORIES || []).map((toRequire) => {
         const Clazz = plugins.itemFactories[toRequire].default
-        console.log(Clazz, 'N IS HERE', plugins.itemFactories[toRequire]) // TODO !0: c'est vide en mode dist !!!
         const factory = new Clazz({
           localStorage: props.localStorage.createSubStorage(toRequire),
           serverStorage: props.serverStorage.createSubStorage(toRequire),
