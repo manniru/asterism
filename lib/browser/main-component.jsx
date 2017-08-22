@@ -103,7 +103,7 @@ class MainComponent extends React.Component {
   }
 
   pushItems (items) {
-    this.setState({ items: () => items }) // TODO !0: ca plante ici !
+    this.setState({ items: () => items })
   }
 }
 

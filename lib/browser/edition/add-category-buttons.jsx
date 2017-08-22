@@ -149,7 +149,7 @@ class AddCategoryButtons extends React.Component {
     } else {
       const { item, preferredHeight, preferredWidth, settingsHandler } = settingOrItem
       this.props.itemManager.addNewItem(item, preferredHeight, preferredWidth, settingsHandler, additionalItem.itemFactory.id)
-      // TODO !4: animation from clicked button to the new item in the grid ?
+      // TODO !3: animation from clicked button to the new item in the grid ?
     }
   }
 
