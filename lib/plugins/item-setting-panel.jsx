@@ -1,9 +1,21 @@
 'use strict'
 
+import PropTypes from 'prop-types'
 import React from 'react'
 
 class ItemSettingPanel extends React.Component {
-  // TODO !3: class to extend for item setting panel.
+  constructor (instanceId, params = {}) {
+    super({ instanceId, params })
+  }
+}
+
+ItemSettingPanel.propTypes = {
+  instanceId: PropTypes.string.isRequired,
+  params: PropTypes.object
+}
+
+ItemSettingPanel.defaultProps = {
+  params: {}
 }
 
 export default ItemSettingPanel

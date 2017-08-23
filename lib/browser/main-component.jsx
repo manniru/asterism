@@ -14,6 +14,7 @@ import DefaultLocalStorage from './default-local-storage'
 import DefaultServerStorage from './default-server-storage'
 import ItemManager from './item-manager'
 import Settings from './edition/settings'
+import ItemSetting from './edition/item-setting'
 
 import 'react-gridifier/dist/styles.css'
 import './styles.css'
@@ -40,7 +41,8 @@ class MainComponent extends React.Component {
         Object.freeze(factory) // protection against hacks
         return factory
       }),
-      items: () => this.itemManager.getAllItems() // must be kept async for init case
+      items: [],
+      itemSettingPanel: null
     }
   }
 
@@ -49,11 +51,28 @@ class MainComponent extends React.Component {
     const bgColor = $('div.asterism').css('background-color')
     $('div.asterism').css('box-shadow', `0 2000px 0 2000px ${bgColor}`)
     $('div.asterism .navbar-fixed ul.side-nav').css('background-color', bgColor)
+
+    Promise.all(this.itemManager.getAllItems())
+    .then((items) => {
+      this.setState({ items })
+    })
+  }
+
+  // TODO !0: show/hide settingPanel correctly with animations...
+  componentWillUpdate (nextProps, nextState) {
+    if (this.state.itemSettingPanel && !nextState.itemSettingPanel) {
+      $('#item-setting-modal').modal('close')
+    }
+  }
+  componentDidUpdate (prevProps, prevState) {
+    if (this.state.itemSettingPanel && !prevState.itemSettingPanel) {
+      $('#item-setting-modal').modal('open')
+    }
   }
 
   render () {
     const { theme, localStorage, serverStorage } = this.props
-    const { editMode, animationLevel, itemFactories, items } = this.state
+    const { editMode, animationLevel, itemFactories, items, itemSettingPanel } = this.state
     return (
       <div className={cx('asterism', theme.backgrounds.body)}>
         <Navbar fixed brand='&nbsp;&nbsp;⁂&nbsp;&nbsp;' href={null} right
@@ -73,7 +92,7 @@ class MainComponent extends React.Component {
         </Navbar>
 
         <Gridifier editable={editMode} sortDispersion orderHandler={this.itemManager.orderHandler}>
-          {items()}
+          {items}
         </Gridifier>
 
         {animationLevel >= 3 ? (
@@ -88,6 +107,11 @@ class MainComponent extends React.Component {
           <Settings animationLevel={animationLevel} localStorage={localStorage} serverStorage={serverStorage}
             itemManager={this.itemManager} theme={theme} />
         ) : null}
+
+        {editMode && itemSettingPanel ? (
+          <ItemSetting animationLevel={animationLevel} localStorage={localStorage}
+            serverStorage={serverStorage} theme={theme}>{itemSettingPanel}</ItemSetting>
+        ) : null}
       </div>
     )
   }
@@ -100,10 +124,6 @@ class MainComponent extends React.Component {
   openSettingsModal () {
     $('#nav-mobile.side-nav').sideNav('hide')
     $('#settings-modal').modal('open')
-  }
-
-  pushItems (items) {
-    this.setState({ items: () => items })
   }
 }
 

@@ -143,14 +143,17 @@ class AddCategoryButtons extends React.Component {
 
   additionalItemSelect (additionalItem) {
     $('#category-modal').modal('close')
-    const settingOrItem = additionalItem.instantiateNewItem()
-    if (settingOrItem instanceof ItemSettingPanel) {
-      // TODO !3: this is a setting panel, show it (animation from clicked button to setting panel ?)
-    } else {
-      const { item, preferredHeight, preferredWidth, settingsHandler } = settingOrItem
-      this.props.itemManager.addNewItem(item, preferredHeight, preferredWidth, settingsHandler, additionalItem.itemFactory.id)
-      // TODO !3: animation from clicked button to the new item in the grid ?
-    }
+    additionalItem.instantiateNewItem()
+    .then((settingOrItem) => {
+      if (settingOrItem instanceof ItemSettingPanel) {
+        this.mainComponent.setState({ itemSettingPanel: settingOrItem })
+        // TODO !3: animation from clicked button to setting panel ?
+      } else {
+        const { item, preferredHeight, preferredWidth, settingsHandler } = settingOrItem
+        this.props.itemManager.addNewItem(item, preferredHeight, preferredWidth, settingsHandler, additionalItem.itemFactory.id)
+        // TODO !3: animation from clicked button to the new item in the grid ?
+      }
+    })
   }
 
   render () {
