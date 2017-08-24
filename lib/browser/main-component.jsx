@@ -15,6 +15,7 @@ import DefaultServerStorage from './default-server-storage'
 import ItemManager from './item-manager'
 import Settings from './edition/settings'
 import ItemSetting from './edition/item-setting'
+import { thenSleep } from './tools'
 
 import 'react-gridifier/dist/styles.css'
 import './styles.css'
@@ -53,17 +54,12 @@ class MainComponent extends React.Component {
     $('div.asterism .navbar-fixed ul.side-nav').css('background-color', bgColor)
 
     Promise.all(this.itemManager.getAllItems())
+    .then(thenSleep(300)) // for cosmetics... can be removed.
     .then((items) => {
       this.setState({ items })
     })
   }
 
-  // TODO !0: show/hide settingPanel correctly with animations...
-  componentWillUpdate (nextProps, nextState) {
-    if (this.state.itemSettingPanel && !nextState.itemSettingPanel) {
-      $('#item-setting-modal').modal('close')
-    }
-  }
   componentDidUpdate (prevProps, prevState) {
     if (this.state.itemSettingPanel && !prevState.itemSettingPanel) {
       $('#item-setting-modal').modal('open')
@@ -91,9 +87,11 @@ class MainComponent extends React.Component {
           </NavItem>
         </Navbar>
 
-        <Gridifier editable={editMode} sortDispersion orderHandler={this.itemManager.orderHandler}>
-          {items}
-        </Gridifier>
+        {items.length ? (
+          <Gridifier editable={editMode} sortDispersion orderHandler={this.itemManager.orderHandler}>
+            {items}
+          </Gridifier>
+        ) : null}
 
         {animationLevel >= 3 ? (
           <TransitionGroup>

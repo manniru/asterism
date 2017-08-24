@@ -1,12 +1,14 @@
 'use strict'
 
+import React from 'react'
+
 import ItemSettingPanel from '../../item-setting-panel'
 
 class SocketLoggerSettingPanel extends ItemSettingPanel {
   render () {
-    <div>SocketLoggerSettingPanel for {this.props.instanceId}</div>
+    return <div>SocketLoggerSettingPanel for {this.props.id}</div>
   }
-  // TODO !2: render it for setup of the item
+  // TODO !3: render it for setup of the item
 }
 
 export default SocketLoggerSettingPanel

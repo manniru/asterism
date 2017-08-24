@@ -5,13 +5,13 @@ import React from 'react'
 
 class SocketLoggerItem extends React.Component {
   render () {
-    <div>RefreshButtonItem for {this.props.instanceId}</div>
+    return <div>RefreshButtonItem for {this.props.id}</div>
   }
-  // TODO !2: return an existing component
+  // TODO !3: return an existing component
 }
 
 SocketLoggerItem.propTypes = {
-  instanceId: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   params: PropTypes.object
 }
 

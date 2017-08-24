@@ -22,7 +22,7 @@ class ItemSetting extends React.Component {
             <div>
               <h4>
                 <Icon small>settings</Icon>
-                Setting for a panel ??? TODO !1
+                Setting for a panel ??? TODO !3
               </h4>
             </div>
           </div>
