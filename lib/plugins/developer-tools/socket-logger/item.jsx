@@ -1,22 +1,13 @@
 'use strict'
 
-import PropTypes from 'prop-types'
 import React from 'react'
 
-class SocketLoggerItem extends React.Component {
+import Item from '../../item'
+
+class SocketLoggerItem extends Item {
   render () {
     return <div>RefreshButtonItem for {this.props.id}</div>
   }
-  // TODO !3: return an existing component
-}
-
-SocketLoggerItem.propTypes = {
-  id: PropTypes.string.isRequired,
-  params: PropTypes.object
-}
-
-SocketLoggerItem.defaultProps = {
-  params: {}
 }
 
 export default SocketLoggerItem
