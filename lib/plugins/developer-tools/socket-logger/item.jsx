@@ -6,7 +6,8 @@ import Item from '../../item'
 
 class SocketLoggerItem extends Item {
   render () {
-    return <div>RefreshButtonItem for {this.props.id}</div>
+    return <div>SocketLoggerItem for {this.props.id}</div>
+    // TODO !2
   }
 }
 

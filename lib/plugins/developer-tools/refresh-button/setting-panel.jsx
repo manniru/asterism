@@ -1,21 +1,30 @@
 'use strict'
 
 import React from 'react'
+import { Button, Input, Row } from 'react-materialize'
 
 import ItemSettingPanel from '../../item-setting-panel'
+import RefreshButtonItem from './item'
 
 class RefreshButtonSettingPanel extends ItemSettingPanel {
   render () {
     return (
-      <div>
-        RefreshButtonSettingPanel for {this.props.id}
-
-        <button onClick={() => this.close()}>Save and close</button>
+      <div className='clearing padded'>
+        <Row className='padded card'>
+          <Input placeholder='Refresh' s={12} label='Label' />
+        </Row>
+        <Button waves='light' className='right' onClick={this.save.bind(this, RefreshButtonItem)}>
+          Save &amp; close
+        </Button>
       </div>
     )
   }
-  // TODO !3: render it for setup of the item.
-  // here you have this.close() to save state.props on server, refresh/generate item, and close modal.
+
+  save () {
+    const params = { ...this.state.params, title: 'todo' } // TODO !0: store title into params
+    this.setState({ params })
+    this.next(RefreshButtonItem)
+  }
 }
 
 export default RefreshButtonSettingPanel

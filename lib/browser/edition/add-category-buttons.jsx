@@ -144,12 +144,12 @@ class AddCategoryButtons extends React.Component {
 
   additionalItemSelect (additionalItem) {
     $('#category-modal').modal('close')
-    additionalItem.instantiateNewItem(this.props.itemManager.settingPanelClosed)
+    additionalItem.instantiateNewItem(this.props.itemManager.settingPanelClosed.bind(this.props.itemManager))
     .then(thenSleep(500)) // wait for modal to close
     .then((settingOrItem) => {
-      if (settingOrItem instanceof ItemSettingPanel) {
+      if (settingOrItem instanceof ItemSettingPanel || (settingOrItem.props && settingOrItem.props.settingPanelCallback)) {
         // initial setting panel before to render the item
-        this.mainComponent.setState({ itemSettingPanel: settingOrItem })
+        this.props.itemManager.mainComponent.setState({ itemSettingPanel: settingOrItem })
         // TODO !4: animation from clicked button to setting panel ?
       } else {
         // item can be added directly

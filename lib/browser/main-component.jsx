@@ -37,7 +37,9 @@ class MainComponent extends React.Component {
         const factory = new Clazz({
           localStorage: props.localStorage.createSubStorage(toRequire),
           serverStorage: props.serverStorage.createSubStorage(toRequire),
-          mainState: this.state }) // context given here
+          mainState: this.state,
+          theme: props.theme
+        }) // context given here
         factory.id = toRequire
         Object.freeze(factory) // protection against hacks
         return factory
@@ -108,6 +110,7 @@ class MainComponent extends React.Component {
 
         {editMode && itemSettingPanel ? (
           <ItemSetting animationLevel={animationLevel} localStorage={localStorage}
+            icon={itemSettingPanel.props.icon} title={itemSettingPanel.props.title}
             serverStorage={serverStorage} theme={theme}>{itemSettingPanel}</ItemSetting>
         ) : null}
       </div>

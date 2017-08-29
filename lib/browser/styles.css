@@ -66,6 +66,15 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.asterism .rg-grid-item .rg-item-wrapper.card {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.asterism .rg-grid-item .rg-item-wrapper {
+  display: flex;
+}
+
 #category-modal .modal-content {
   padding: 0;
 }
@@ -149,3 +158,27 @@
   padding: 1em 0.2em;
 }
 
+#item-setting-modal .modal-content {
+  padding: 0;
+}
+
+/* Used by item setting panels and items from outside */
+
+.asterism .rg-grid-item .rg-item-wrapper .fluid,
+#item-setting-modal .modal-content .setting-panel .fluid {
+  flex-grow: 1;
+}
+
+.asterism .rg-grid-item .rg-item-wrapper .padded,
+#item-setting-modal .modal-content .setting-panel .padded {
+  padding: 1em;
+}
+
+.asterism .rg-grid-item .rg-item-wrapper .clearing::after,
+#item-setting-modal .modal-content .setting-panel .clearing::after {
+  clear: both;
+  content: ' ';
+  display: block;
+  height: 0;
+  visibility: hidden;
+}

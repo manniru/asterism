@@ -14,20 +14,20 @@ class ItemSetting extends React.Component {
   }
 
   render () {
-    const { theme, children } = this.props
+    const { icon, title, theme, children } = this.props
     return (
       <div id='item-setting-modal' className={cx('modal', theme.backgrounds.body)}>
         <div className='modal-content'>
           <div className={cx('coloring-header', theme.backgrounds.editing)}>
             <div>
               <h4>
-                <Icon small>settings</Icon>
-                Setting for a panel ??? TODO !1
+                <Icon small>{icon || 'settings'}</Icon>
+                {title || 'Item setting'}
               </h4>
             </div>
           </div>
 
-          <div className='center'>
+          <div className='center setting-panel'>
             {children}
           </div>
         </div>
@@ -37,6 +37,8 @@ class ItemSetting extends React.Component {
 }
 
 ItemSetting.propTypes = {
+  icon: PropTypes.string,
+  title: PropTypes.string,
   theme: PropTypes.object.isRequired,
   localStorage: PropTypes.object.isRequired,
   serverStorage: PropTypes.object.isRequired,
