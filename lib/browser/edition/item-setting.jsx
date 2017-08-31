@@ -8,17 +8,22 @@ import { Icon } from 'react-materialize'
 
 class ItemSetting extends React.Component {
   componentDidMount () {
+    const { animationLevel } = this.props
     $('#item-setting-modal').modal({
-      dismissible: false
+      dismissible: false,
+      opacity: 0.5,
+      inDuration: animationLevel >= 2 ? 300 : 0,
+      outDuration: animationLevel >= 2 ? 300 : 0,
+      endingTop: '10%'
     })
   }
 
   render () {
-    const { icon, title, theme, children } = this.props
+    const { icon, title, theme, children, animationLevel } = this.props
     return (
       <div id='item-setting-modal' className={cx('modal', theme.backgrounds.body)}>
         <div className='modal-content'>
-          <div className={cx('coloring-header', theme.backgrounds.editing)}>
+          <div className={cx('coloring-header', animationLevel < 3 ? theme.backgrounds.editing : null)}>
             <div>
               <h4>
                 <Icon small>{icon || 'settings'}</Icon>

@@ -48,6 +48,22 @@ class BasicItemFactory {
   }
 }
 
+class ItemLinker {
+  receiveItemSettingPanel (itemSettingPanel) {
+    this.itemSettingPanel = itemSettingPanel
+    this.linkBoth()
+  }
+  receiveItem (item) {
+    this.item = item
+    this.linkBoth()
+  }
+  linkBoth () {
+    if (this.item && this.itemSettingPanel && this.itemSettingPanel.state.item !== this.item) {
+      this.itemSettingPanel.setState({ item: this.item })
+    }
+  }
+}
+
 class ItemTypeBuilder {
   constructor (itemFactoryBuilder, id, category) {
     this.itemFactoryBuilder = itemFactoryBuilder
@@ -82,17 +98,15 @@ class ItemTypeBuilder {
     const settingIcon = this.settingPanelIcon
     const settingTitle = this.settingPanelTitle || this.title
     this.newInstance = (itemFactory) => (id, settingPanelCallback, context) => {
-      const item = <ItemClass id={id} context={context} />
-      return {
-        id,
-        item,
-        preferredHeight,
-        preferredWidth,
-        settingPanel: <SettingPanelClass icon={settingIcon} title={settingTitle}
-          id={id} item={item} context={context}
-          save={(newParams) => itemFactory.saveItem(id, newParams, typeId)}
-          settingPanelCallback={settingPanelCallback} />
-      }
+      const itemLinker = new ItemLinker()
+      const item = <ItemClass id={id} context={context} ref={(c) => itemLinker.receiveItem(c)} />
+      const settingPanel = <SettingPanelClass ref={(c) => itemLinker.receiveItemSettingPanel(c)}
+        icon={settingIcon} title={settingTitle}
+        id={id} item={item} context={context}
+        save={(newParams) => itemFactory.saveItem(id, newParams, typeId)}
+        settingPanelCallback={settingPanelCallback} />
+
+      return { id, item, preferredHeight, preferredWidth, settingPanel }
     }
     return this
   }
@@ -120,14 +134,15 @@ class ItemTypeBuilder {
     const settingIcon = this.settingPanelIcon
     const settingTitle = this.settingPanelTitle || this.title
     this.restoreInstance = (itemFactory) => (id, params, settingPanelCallback, context) => {
-      const item = <ItemClass id={id} initialParams={params} context={context} />
-      return {
-        item,
-        settingPanel: <SettingPanelClass icon={settingIcon} title={settingTitle}
-          id={id} initialParams={params} item={item} context={context}
-          save={(newParams) => itemFactory.saveItem(id, newParams, typeId)}
-          settingPanelCallback={settingPanelCallback} />
-      }
+      const itemLinker = new ItemLinker()
+      const item = <ItemClass id={id} initialParams={params} context={context} ref={(c) => itemLinker.receiveItem(c)} />
+      const settingPanel = <SettingPanelClass ref={(c) => itemLinker.receiveItemSettingPanel(c)}
+        icon={settingIcon} title={settingTitle}
+        id={id} initialParams={params} item={item} context={context}
+        save={(newParams) => itemFactory.saveItem(id, newParams, typeId)}
+        settingPanelCallback={settingPanelCallback} />
+
+      return { item, settingPanel }
     }
     return this
   }
@@ -187,5 +202,7 @@ class ItemFactoryBuilder {
     return itemsInjectorMixin(BaseClass)
   }
 }
+
+ItemFactoryBuilder.ItemLinker = ItemLinker
 
 export default ItemFactoryBuilder

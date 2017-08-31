@@ -1,6 +1,6 @@
 {
   "name": "asterism",
-  "version": "0.0.16",
+  "version": "0.1.1",
   "description": "Extensible dashboard platform for domotics",
   "author": "Xavier Gouley <gxapplications@gmail.com>",
   "contributors": [],

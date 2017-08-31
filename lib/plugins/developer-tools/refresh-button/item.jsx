@@ -10,8 +10,9 @@ class RefreshButtonItem extends Item {
   render () {
     const { theme } = this.props.context
     const { title = 'Refresh' } = this.state.params
+
     return (
-      <Button waves='light' className={cx(theme.actions.edition, 'truncate fluid')} flat onClick={this.click.bind(this)}>
+      <Button waves='light' className={cx(theme.actions.edition, 'truncate fluid')} onClick={this.click.bind(this)}>
         {title}<Icon left>refresh</Icon>
       </Button>
     )

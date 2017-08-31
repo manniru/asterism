@@ -1,22 +1,34 @@
 'use strict'
 
 import React from 'react'
+import { Button } from 'react-materialize'
 
 import ItemSettingPanel from '../../item-setting-panel'
 import SocketLoggerItem from './item'
 
 class SocketLoggerSettingPanel extends ItemSettingPanel {
   render () {
-    return (
-      <div>
-        SocketLoggerSettingPanel for {this.props.id}
+    const { context } = this.props
+    const { animationLevel } = context.mainState()
 
-        <button onClick={() => this.next(SocketLoggerItem)}>Save and close</button>
+    const waves = animationLevel >= 2 ? 'light' : undefined
+
+    return (
+      <div className='clearing padded'>
+        // TODO !3: log level in a dropdown?
+
+        <Button waves={waves} className='right' onClick={this.save.bind(this)}>
+          Save &amp; close
+        </Button>
       </div>
     )
   }
-  // TODO !2: render it for setup of the item.
-  // here you have this.close() to save state.props on server, refresh/generate item, and close modal.
+
+  save () {
+    const params = { ...this.state.params } // TODO !3: add value here
+    this.setState({ params })
+    this.next(SocketLoggerItem, params)
+  }
 }
 
 export default SocketLoggerSettingPanel
