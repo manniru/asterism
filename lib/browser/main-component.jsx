@@ -14,6 +14,7 @@ import DefaultLocalStorage from './default-local-storage'
 import DefaultServerStorage from './default-server-storage'
 import ItemManager from './item-manager'
 import Settings from './edition/settings'
+import SocketManager from './socket-manager'
 import ItemSetting from './edition/item-setting'
 import { thenSleep } from './tools'
 
@@ -26,6 +27,8 @@ class MainComponent extends React.Component {
   constructor (props) {
     super(props)
 
+    this.socketManager = new SocketManager()
+
     // Instantiate orderHandler and initial items for this.state (need to be sync)
     this.itemManager = new ItemManager(props.localStorage, props.serverStorage, this)
 
@@ -33,14 +36,16 @@ class MainComponent extends React.Component {
       editMode: false,
       animationLevel: parseInt(props.localStorage.getItem('settings-animation-level') || 3), // 1..3
       itemFactories: (process.env.ASTERISM_ITEM_FACTORIES || []).map((toRequire) => {
-        const Clazz = plugins.itemFactories[toRequire].default
+        const Clazz = plugins.itemFactories[toRequire.module].default
         const factory = new Clazz({
-          localStorage: props.localStorage.createSubStorage(toRequire),
-          serverStorage: props.serverStorage.createSubStorage(toRequire),
+          localStorage: props.localStorage.createSubStorage(toRequire.module),
+          serverStorage: props.serverStorage.createSubStorage(toRequire.module),
           mainState: this.getState.bind(this),
-          theme: props.theme
+          theme: props.theme,
+          privateSocket: this.socketManager.connectPrivateSocket(toRequire.privateSocket)
+          // TODO !0: injecter toRequire.privateSocket et panel.publicSockets ici
         }) // context given here
-        factory.id = toRequire
+        factory.id = toRequire.module
         Object.freeze(factory) // protection against hacks
         return factory
       }),

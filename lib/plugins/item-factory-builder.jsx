@@ -5,8 +5,8 @@ import React from 'react'
 import AdditionalItem from './additional-item'
 
 class BasicItemFactory {
-  constructor ({ localStorage, serverStorage, mainState, theme }) {
-    this.context = { localStorage, serverStorage, mainState, theme }
+  constructor ({ localStorage, serverStorage, mainState, theme, privateSocket }) {
+    this.context = { localStorage, serverStorage, mainState, theme, privateSocket } // TODO !0: on les transmet ! tester
     this.items = this.constructor.generateItems(this)
   }
 

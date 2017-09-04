@@ -33,7 +33,8 @@ class Settings extends React.Component {
 
     // Plugin settings panels
     this.pluginSettingsPanels = (process.env.ASTERISM_SETTINGS_PANELS || []).map((toRequire) => {
-      return plugins.settingsPanels[toRequire].default
+      return plugins.settingsPanels[toRequire.module].default
+      // TODO !0: injecter toRequire.privateSocket et panel.publicSockets ici
     })
 
     // debounced onresize event
