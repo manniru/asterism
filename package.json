@@ -1,6 +1,6 @@
 {
   "name": "asterism",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Extensible dashboard platform for domotics",
   "author": "Xavier Gouley <gxapplications@gmail.com>",
   "contributors": [],
@@ -12,7 +12,7 @@
     "start:debug": "cross-env NODE_ENV=development DEBUG=* nodemon --watch lib/server example/hot-reload.js",
     "dist": "rimraf dist && babel lib --presets=babel-preset-node7,babel-preset-es2017-node7/webpack2,react-es2015 --out-dir dist",
     "prepublish": "npm run dist",
-    "doc:jsdoc": "jsdoc --package package.json --readme README.md --destination doc/jsdoc/ lib/**",
+    "doc:jsdoc": "jsdoc --package package.json --readme README.md --destination doc/jsdoc/ lib/plugins/*",
     "doc:coverage": "cross-env NODE_ENV=test nyc --require babel-core/register --reporter=lcov mocha && rimraf .nyc_output",
     "doc": "rimraf doc && npm run doc:jsdoc && groc && npm run doc:coverage",
     "lint": "standard --verbose | snazzy",
