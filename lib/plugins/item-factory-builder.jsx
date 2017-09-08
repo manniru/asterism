@@ -6,7 +6,7 @@ import AdditionalItem from './additional-item'
 
 class BasicItemFactory {
   constructor ({ localStorage, serverStorage, mainState, theme, privateSocket }) {
-    this.context = { localStorage, serverStorage, mainState, theme, privateSocket } // TODO !0: on les transmet ! tester
+    this.context = { localStorage, serverStorage, mainState, theme, privateSocket }
     this.items = this.constructor.generateItems(this)
   }
 

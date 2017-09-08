@@ -33,8 +33,11 @@ class Settings extends React.Component {
 
     // Plugin settings panels
     this.pluginSettingsPanels = (process.env.ASTERISM_SETTINGS_PANELS || []).map((toRequire) => {
-      return plugins.settingsPanels[toRequire.module].default
-      // TODO !0: injecter toRequire.privateSocket et panel.publicSockets ici
+      return {
+        'Panel': plugins.settingsPanels[toRequire.module].default,
+        'privateSocket': toRequire.privateSocket,
+        'publicSockets': toRequire.publicSockets
+      }
     })
 
     // debounced onresize event
@@ -86,9 +89,10 @@ class Settings extends React.Component {
             <UserInterface localStorage={localStorage} theme={theme}
               showRefreshButton={() => this.setState({ showRefreshButton: true })} />
 
-            {this.pluginSettingsPanels.map((Panel, idx) => (
+            {this.pluginSettingsPanels.map(({ Panel, privateSocket, publicSockets }, idx) => (
               <Panel key={idx} localStorage={localStorage} theme={theme}
-                showRefreshButton={() => this.setState({ showRefreshButton: true })} />
+                showRefreshButton={() => this.setState({ showRefreshButton: true })}
+                privateSocket={privateSocket} publicSockets={publicSockets} />
             ))}
           </div>
 
