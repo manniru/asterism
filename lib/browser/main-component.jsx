@@ -42,8 +42,8 @@ class MainComponent extends React.Component {
           serverStorage: props.serverStorage.createSubStorage(toRequire.module),
           mainState: this.getState.bind(this),
           theme: props.theme,
-          privateSocket: this.socketManager.connectPrivateSocket(toRequire.privateSocket)
-          // TODO !1: injecter panel.publicSockets ici
+          privateSocket: this.socketManager.connectPrivateSocket(toRequire.privateSocket),
+          publicSockets: toRequire.publicSockets.map(this.socketManager.connectPublicSocket)
         }) // context given here
         factory.id = toRequire.module
         Object.freeze(factory) // protection against hacks

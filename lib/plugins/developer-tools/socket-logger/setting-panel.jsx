@@ -15,7 +15,7 @@ class SocketLoggerSettingPanel extends ItemSettingPanel {
 
     return (
       <div className='clearing padded'>
-        // TODO !3: log level in a dropdown?
+        // TODO !2: log level in a dropdown?
 
         <Button waves={waves} className='right' onClick={this.save.bind(this)}>
           Save &amp; close
@@ -25,7 +25,7 @@ class SocketLoggerSettingPanel extends ItemSettingPanel {
   }
 
   save () {
-    const params = { ...this.state.params } // TODO !3: add value here
+    const params = { ...this.state.params } // TODO !2: add value here
     this.setState({ params })
     this.next(SocketLoggerItem, params)
   }
