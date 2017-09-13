@@ -5,6 +5,15 @@ import React from 'react'
 import Item from '../../item'
 
 class SocketLoggerItem extends Item {
+  constructor (props) {
+    super(props)
+    console.log('merde', props.context.publicSockets)
+    const socket = props.context.publicSockets.find((socket) => socket.nsp === '/public/asterism/developer-tools/log') // TODO !0: map this before !
+    socket.on('log', (args) => {
+      console.log(args)
+    })
+  }
+
   render () {
     return (
       <div className='truncate fluid'>
