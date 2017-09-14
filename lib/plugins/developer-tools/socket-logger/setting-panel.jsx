@@ -15,7 +15,7 @@ class SocketLoggerSettingPanel extends ItemSettingPanel {
 
     return (
       <div className='clearing padded'>
-        // TODO !0: log level in a dropdown?
+        // TODO !0: log level in a dropdown: min-level [0-3]
 
         <Button waves={waves} className='right' onClick={this.save.bind(this)}>
           Save &amp; close

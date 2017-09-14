@@ -8,18 +8,45 @@ class SocketLoggerItem extends Item {
   constructor (props) {
     super(props)
     const socket = props.context.publicSockets['asterism/developer-tools/log']
+
+    this.state = {
+      logs: []
+    }
+
+    // TODO !1: filter these, depending on min level to log!
     socket.on('log', (args) => {
-      console.log(args) // TODO !0: display them in the render() instead.
+      this.stackToLog({ level: 0, args })
+    })
+    socket.on('info', (args) => {
+      this.stackToLog({ level: 1, args })
+    })
+    socket.on('warn', (args) => {
+      this.stackToLog({ level: 2, args })
+    })
+    socket.on('error', (args) => {
+      this.stackToLog({ level: 3, args })
     })
   }
 
   render () {
+    const { logs } = this.state
     return (
       <div className='truncate fluid'>
-        SocketLoggerItem for {this.props.id}
+        {logs.map((log) => {
+          return <pre>{log.level} - {log.args}</pre>
+        })}
       </div>
     )
-    // TODO !3: render logs: log messages from sockets (and others ? from server ? can catch browser console messages ?)
+    // TODO !0: render them!
+  }
+
+  stackToLog (log) {
+    const newLogs = this.state.logs.concat([log]) // use concat, not .push, no change object ref
+    while (newLogs.length > 30) { // TODO !0: param into setting panel
+      newLogs.shift()
+    }
+
+    this.setState({ logs: newLogs })
   }
 }
 
