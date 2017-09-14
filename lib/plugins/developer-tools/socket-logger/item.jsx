@@ -7,10 +7,9 @@ import Item from '../../item'
 class SocketLoggerItem extends Item {
   constructor (props) {
     super(props)
-    console.log('merde', props.context.publicSockets)
-    const socket = props.context.publicSockets.find((socket) => socket.nsp === '/public/asterism/developer-tools/log') // TODO !0: map this before !
+    const socket = props.context.publicSockets['asterism/developer-tools/log']
     socket.on('log', (args) => {
-      console.log(args)
+      console.log(args) // TODO !0: display them in the render() instead.
     })
   }
 
