@@ -3,6 +3,7 @@
 import cx from 'classnames'
 import debounce from 'debounce'
 import React from 'react'
+import { Modal } from 'react-materialize'
 
 import Item from '../../item'
 
@@ -60,27 +61,28 @@ class SocketLoggerItem extends Item {
     const { context } = this.props
     return (
       <div className={cx(context.theme.actions.edition, 'fluid')} style={styles.container}>
-        <div style={styles.logScroller}>
+        <div className='thin-scrollable' style={styles.logScroller}>
           {logs.map((log, idx) => {
-            const timestamp = new Date()
+            let timestamp = new Date()
             timestamp.setTime(log.args[0])
-            // TODO !0: onClick: wave depending on animationLevel; scrollbar tuning (thin, better....)
-            return <pre key={idx} style={{ ...styles.logRow, ...styles.logLevel(context.theme)[log.level] }}>
-              <a style={styles.logRowInset} onClick={this.openLogRow.bind(this, log)}>
-                [{timestamp.toString()}]
-                <br/>
-                {log.args.slice(1).join('\n')}
-              </a>
-            </pre>
+            timestamp = timestamp.toLocaleString()
+            return (
+              <Modal key={idx}
+                header={timestamp}
+                trigger={<pre style={{ ...styles.logRow, ...styles.logLevel(context.theme)[log.level] }}>
+                  <span style={styles.logRowInset}>
+                    [{timestamp}]
+                    <br/>
+                    {log.args[1]}
+                  </span>
+                </pre>}>
+                <pre>{log.args.slice(1).join('\n')}</pre>
+              </Modal>
+            )
           })}
         </div>
       </div>
     )
-  }
-
-  openLogRow (log) {
-    console.log(log)
-    // TODO !0: modal with data from log
   }
 }
 

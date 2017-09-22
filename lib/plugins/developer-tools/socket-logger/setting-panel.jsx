@@ -15,9 +15,15 @@ class SocketLoggerSettingPanel extends ItemSettingPanel {
 
     return (
       <div className='clearing padded'>
-        // TODO !0: log level slider knob: min-level [0-3]:  logLevel = 1 par default
+        // TODO !0: log level slider knob: min-level [0-3]:  logLevel = 1 par default<br/>
+          <p className='range-field'>
+            <input type='range' id='test' min='0' max='3' />
+          </p>
 
-        // TODO !0: also history length slider knob [1-100]:  historyLength = 30 par default
+        // TODO !0: also history length slider knob [1-100]:  historyLength = 30 par default<br/>
+          <p className='range-field'>
+            <input type='range' id='test2' min='1' max='100' />
+          </p>
 
         <Button waves={waves} className='right' onClick={this.save.bind(this)}>
           Save &amp; close

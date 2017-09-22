@@ -127,12 +127,12 @@ class MainComponent extends React.Component {
           className={cx({ [theme.backgrounds.card]: !editMode, [theme.backgrounds.editing]: editMode })}
         >
           {editMode ? (
-            <NavItem onClick={this.openSettingsModal.bind(this)} className={cx(animationLevel >= 2 ? 'waves-effect waves-light' : '')}>
+            <NavItem onClick={this.openSettingsModal.bind(this)} href='javascript:void(0)' className={cx(animationLevel >= 2 ? 'waves-effect waves-light' : '')}>
               <Icon>settings</Icon>
               <span className='hide-on-large-only'>Settings</span>
             </NavItem>
           ) : null}
-          <NavItem onClick={this.toggleEditMode.bind(this)} className={cx(animationLevel >= 2 ? 'waves-effect waves-light' : '')}>
+          <NavItem onClick={this.toggleEditMode.bind(this)} href='javascript:void(0)' className={cx(animationLevel >= 2 ? 'waves-effect waves-light' : '')}>
             <Icon>edit</Icon>
             <span className='hide-on-large-only'>{editMode ? 'End edition' : 'Edit mode'}</span>
           </NavItem>
