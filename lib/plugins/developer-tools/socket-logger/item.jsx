@@ -3,7 +3,7 @@
 import cx from 'classnames'
 import debounce from 'debounce'
 import React from 'react'
-import { Modal } from 'react-materialize'
+import { Button, Icon, Modal } from 'react-materialize'
 
 import Item from '../../item'
 
@@ -14,7 +14,7 @@ class SocketLoggerItem extends Item {
   constructor (props) {
     super(props)
     const socket = props.context.publicSockets['asterism/developer-tools/log']
-    const { historyLength = 30, logLevel = 1 } = this.state.params
+    const { historyLength = 30, logLevel = 1 } = props.initialParams
 
     const logsBuffer = []
     this.debouncer = debounce(() => {
@@ -22,7 +22,8 @@ class SocketLoggerItem extends Item {
     }, 100, false)
 
     this.state = {
-      logs: []
+      logs: [],
+      needRefresh: false
     }
 
     const stackToLog = (log) => {
@@ -56,10 +57,20 @@ class SocketLoggerItem extends Item {
     }
   }
 
+  receiveNewParams (params) {
+    // this item cannot handle dynamic params change: will flag itself has 'to refresh'
+    console.log('The Socket Logger item need a page refresh to take new params into account.')
+    this.setState({ needRefresh: true })
+  }
+
   render () {
-    const { logs } = this.state
+    const { logs, needRefresh } = this.state
     const { context } = this.props
-    return (
+    return needRefresh ? (
+      <Button waves='light' className={cx(context.theme.actions.edition, 'truncate fluid')} onClick={this.refreshPage.bind(this)}>
+        Need a refresh<Icon left>refresh</Icon>
+      </Button>
+    ) : (
       <div className={cx(context.theme.actions.edition, 'fluid')} style={styles.container}>
         <div className='thin-scrollable' style={styles.logScroller}>
           {logs.map((log, idx) => {
@@ -83,6 +94,10 @@ class SocketLoggerItem extends Item {
         </div>
       </div>
     )
+  }
+
+  refreshPage () {
+    window.location.reload()
   }
 }
 

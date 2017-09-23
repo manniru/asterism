@@ -79,21 +79,24 @@ class MainComponent extends React.Component {
         const animationFlow = this.state.animationFlow
         animationFlow.then(thenSleep(300)) // wait modal to be at right place
         .then(({ rect, bullet }) => {
+          const bulletIcon = $('i', bullet)
           const header = $('#item-setting-modal .coloring-header')[0]
           const headerBounds = header.getBoundingClientRect()
           rect.css({ top: headerBounds.top, left: headerBounds.left, height: headerBounds.height, width: headerBounds.width })
-          return { rect, bullet, header }
+          bulletIcon.css({ color: 'transparent' })
+          return { rect, bullet, header, bulletIcon }
         })
         .then(thenSleep(200))
-        .then(({ rect, bullet, header }) => {
+        .then(({ rect, bullet, header, bulletIcon }) => {
           bullet.removeClass('shrink')
           $(header).addClass(this.props.theme.backgrounds.editing)
-          return { rect, bullet }
+          return { rect, bullet, bulletIcon }
         })
         .then(thenSleep(500))
-        .then(({ rect, bullet }) => {
+        .then(({ rect, bullet, bulletIcon }) => {
           rect.css({ top: -100, left: -100, height: 10, width: 10, display: 'none' })
           bullet.css({ 'background-color': '#fff' })
+          bulletIcon.css({ color: '#fff' })
           this.setState({ animationFlow: null })
         })
       }
