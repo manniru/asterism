@@ -159,7 +159,7 @@ class MainComponent extends React.Component {
 
         {editMode ? (
           <Settings animationLevel={animationLevel} localStorage={localStorage} serverStorage={serverStorage}
-            itemManager={this.itemManager} theme={theme} />
+            itemManager={this.itemManager} socketManager={this.socketManager} theme={theme} />
         ) : null}
 
         {editMode && itemSettingPanel ? (

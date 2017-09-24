@@ -51,8 +51,10 @@
           [
             "css-modules-transform",
             {
+              "preprocessCss": "./lib/browser/builder/babel-sass-preprocessor.js",
               "generateScopedName": "[local]",
-              "extractCss": "./dist/styles.css"
+              "extractCss": "./dist/styles.css",
+              "extensions": [".css", ".scss"]
             }
           ]
         ]
@@ -99,6 +101,7 @@
     "imports-loader": "^0.7.1",
     "joi": "^10.6.0",
     "materialize-css": "^0.98.2",
+    "node-sass": "^4.5.3",
     "nosql": "^5.0.3",
     "object-path": "^0.11.4",
     "prop-types": "^15.5.10",
@@ -108,6 +111,7 @@
     "react-hot-loader": "^3.0.0-beta.7",
     "react-materialize": "^1.0.10",
     "react-transition-group": "^1.2.0",
+    "sass-loader": "^6.0.6",
     "sha1": "^1.1.1",
     "socket.io": "^2.0.3",
     "style-loader": "^0.18.2",
