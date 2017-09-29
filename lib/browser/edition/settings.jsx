@@ -35,7 +35,7 @@ class Settings extends React.Component {
     this.pluginSettingsPanels = (process.env.ASTERISM_SETTINGS_PANELS || []).map((toRequire) => {
       return {
         'Panel': plugins.settingsPanels[toRequire.module].default,
-        'privateSocket': props.socketManager.connectPrivateSocket(toRequire.privateSocket), // TODO !0: tester
+        'privateSocket': props.socketManager.connectPrivateSocket(toRequire.privateSocket),
         'publicSockets': toRequire.publicSockets.reduce((acc, namespace) => {
             acc[namespace] = props.socketManager.connectPublicSocket(namespace)
             return acc

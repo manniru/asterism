@@ -67,11 +67,13 @@ class MainComponent extends React.Component {
     Promise.all(this.itemManager.getAllItems())
     .then(thenSleep(300)) // for cosmetics... can be removed.
     .then((items) => {
+      console.log(`Restoring ${items.length} items in the grid...`)
       this.setState({ items })
     })
   }
 
   componentDidUpdate (prevProps, prevState) {
+    // If an ItemSettingPAnel should be displayed
     if (this.state.itemSettingPanel && !prevState.itemSettingPanel) {
       $('#item-setting-modal').modal('open')
 
@@ -100,7 +102,7 @@ class MainComponent extends React.Component {
           this.setState({ animationFlow: null })
         })
       }
-    } else {
+    } else { // If an animation flow should be played
       if (this.state.animationFlow && this.state.animationLevel >= 3) {
         const animationFlow = this.state.animationFlow
         animationFlow.then(({ rect, bullet }) => {

@@ -54,7 +54,10 @@
               "preprocessCss": "./lib/browser/builder/babel-sass-preprocessor.js",
               "generateScopedName": "[local]",
               "extractCss": "./dist/styles.css",
-              "extensions": [".css", ".scss"]
+              "extensions": [
+                ".css",
+                ".scss"
+              ]
             }
           ]
         ]
@@ -107,7 +110,7 @@
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-color": "^2.13.4",
-    "react-gridifier": "^0.3.4",
+    "react-gridifier": "^0.3.9",
     "react-hot-loader": "^3.0.0-beta.7",
     "react-materialize": "^1.0.10",
     "react-transition-group": "^1.2.0",
