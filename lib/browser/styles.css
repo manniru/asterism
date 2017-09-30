@@ -127,6 +127,39 @@
   background-color: #555;
 }
 
+.asterism .resizer {
+    padding: 0;
+    position: relative;
+}
+
+.asterism .resizer .btn-floating.btn-small {
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-size: 0.8em;
+}
+
+.asterism .resizer table > tr > td {
+  padding: 0.3rem;
+  width: 34px;
+  height: 34px;
+}
+
+.asterism .resizer table.background {
+  position: absolute;
+  left: 0;
+}
+
+.asterism .resizer table.background > tr > td {
+    padding: 0.1rem;
+}
+
+.asterism .resizer table.background > tr > td > div {
+  width: 100%;
+  height: 100%;
+  border-radius: 1px;
+}
+
 @keyframes asterism-pulse {
   0% {transform: scale(1);}
   30% {transform: scale(0.9);}

@@ -51,7 +51,7 @@
           [
             "css-modules-transform",
             {
-              "preprocessCss": "./lib/browser/builder/babel-sass-preprocessor.js",
+              "preprocessCss": "./babel-sass-preprocess.js",
               "generateScopedName": "[local]",
               "extractCss": "./dist/styles.css",
               "extensions": [
