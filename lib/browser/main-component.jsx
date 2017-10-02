@@ -15,6 +15,7 @@ import DefaultServerStorage from './default-server-storage'
 import ItemManager from './item-manager'
 import Settings from './edition/settings'
 import SocketManager from './socket-manager'
+import SpeechManager from './speech-manager'
 import ItemSetting from './edition/item-setting'
 import { thenSleep } from './tools'
 
@@ -28,6 +29,7 @@ class MainComponent extends React.Component {
     super(props)
 
     this.socketManager = new SocketManager()
+    this.speechManager = new SpeechManager()
 
     // Instantiate orderHandler and initial items for this.state (need to be sync)
     this.itemManager = new ItemManager(props.localStorage, props.serverStorage, this)

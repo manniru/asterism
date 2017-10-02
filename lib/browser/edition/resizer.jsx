@@ -27,29 +27,33 @@ class Resizer extends React.Component {
     return (
       <div className='card-panel resizer'>
         <table className='background'>
-          {[1, 2, 3, 4, 5, 6].map((h) => (
-            <tr key={`0-${h}`}>
-              {[1, 2, 3, 4, 5, 6].map((w) => (
-                <td key={`${w}-${h}`}><div style={backgroundColor(w, h)} /></td>
-              ))}
-            </tr>
-          ))}
+          <tbody>
+            {[1, 2, 3, 4, 5, 6].map((h) => (
+              <tr key={`0-${h}`}>
+                {[1, 2, 3, 4, 5, 6].map((w) => (
+                  <td key={`${w}-${h}`}><div style={backgroundColor(w, h)} /></td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
         </table>
         <table>
-          {[1, 2, 3, 4, 5, 6].map((h) => (
-            <tr key={`0-${h}`}>
-              {[1, 2, 3, 4, 5, 6].map((w) => (
-                <td key={`${w}-${h}`}>
-                  <button
-                    className={cx('btn btn-floating btn-small waves-effect waves-light', { disabled: !this.isSizeAvailable(w, h) })}
-                    onClick={() => this.selectSize.bind(this, w, h)}
-                  >
-                    {w}-{h}
-                  </button>
-                </td>
-              ))}
-            </tr>
-          ))}
+          <tbody>
+            {[1, 2, 3, 4, 5, 6].map((h) => (
+              <tr key={`0-${h}`}>
+                {[1, 2, 3, 4, 5, 6].map((w) => (
+                  <td key={`${w}-${h}`}>
+                    <button
+                      className={cx('btn btn-floating btn-small waves-effect waves-light', { disabled: !this.isSizeAvailable(w, h) })}
+                      onClick={() => this.selectSize.bind(this, w, h)}
+                    >
+                      {w}-{h}
+                    </button>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     )
