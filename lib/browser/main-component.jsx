@@ -127,12 +127,15 @@ class MainComponent extends React.Component {
   render () {
     const { theme, localStorage, serverStorage } = this.props
     const { editMode, animationLevel, itemFactories, items, itemSettingPanel } = this.state
+    const SpeechStatus = this.speechManager.getComponent()
     return (
       <div className={cx('asterism', theme.backgrounds.body)}>
         <Navbar fixed brand='⁂' href={null} right
           options={{ closeOnClick: true }}
           className={cx({ [theme.backgrounds.card]: !editMode, [theme.backgrounds.editing]: editMode })}
         >
+          <SpeechStatus animationLevel={animationLevel} />
+          <NavItem divider />
           {editMode ? (
             <NavItem onClick={this.openSettingsModal.bind(this)} href='javascript:void(0)' className={cx(animationLevel >= 2 ? 'waves-effect waves-light' : '')}>
               <Icon>settings</Icon>

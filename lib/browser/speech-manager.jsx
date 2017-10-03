@@ -1,12 +1,27 @@
 'use strict'
 
+// import PropTypes from 'prop-types'
+import cx from 'classnames'
+import { NavItem, Icon } from 'react-materialize'
+import React from 'react'
+
 export default class SpeechManager {
   constructor () {
-    // TODO !0: if no speech, show an icon
-    if (!('webkitSpeechRecognition' in window)) {
-      alert('Pas de speech !')
-    } else {
-      alert('Speech OK')
-    }
+    this.speechAvailable = 'webkitSpeechRecognition' in window
+  }
+
+  speech () {
+    console.log('TODO') // TODO !2
+  }
+
+  getComponent () {
+    const available = this.speechAvailable
+    return ({ animationLevel }) => (
+      <NavItem className={cx(available && animationLevel >= 2 ? 'waves-effect waves-light' : '', { 'speech-disabled': !available })}
+        href='javascript:void(0)' onClick={() => { if (available) { this.speech() } }}
+      >
+        <Icon>{available ? 'mic' : 'mic_off'}</Icon>
+      </NavItem>
+    )
   }
 }
