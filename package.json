@@ -73,10 +73,6 @@
       "/doc/"
     ]
   },
-  "pre-commit": [
-    "lint",
-    "test"
-  ],
   "nyc": {
     "lines": 40,
     "check-coverage": true,

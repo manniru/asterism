@@ -10,7 +10,7 @@ class Resizer extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      selected: { w: 3, h: 2 }
+      selected: { w: props.initialWidth, h: props.initialHeight }
     }
   }
 
@@ -72,7 +72,7 @@ class Resizer extends React.Component {
   }
 
   isDimensionAvailable (w, h) {
-    const search = this.props.acceptedDimensions.find((dimension) => dimension.w === w && dimension.h === h)
+    const search = (this.props.acceptedDimensions || []).find((dimension) => dimension.w === w && dimension.h === h)
     return !!search
   }
 
@@ -80,16 +80,17 @@ class Resizer extends React.Component {
     if (!this.isDimensionAvailable(w, h)) {
       return
     }
-
-    const item = this.props.mainComponent.state.items.find((i) => i.props.id === this.props.itemId)
-    console.log(item, 'ici')
-    // TODO !0: affect new dim to item and save it. OR replace item... how to do ?
+    this.setState({ selected: { w, h } })
+    $(`#resizer-${this.props.itemId.substr(-36)}`).modal('close')
+    this.props.mainComponent.itemManager.resizeItem(this.props.itemId, h, w)
   }
 }
 
 Resizer.propTypes = {
   itemId: PropTypes.string.isRequired,
   mainComponent: PropTypes.object.isRequired,
+  initialHeight: PropTypes.number.isRequired,
+  initialWidth: PropTypes.number.isRequired,
   acceptedDimensions: PropTypes.array.isRequired
 }
 
