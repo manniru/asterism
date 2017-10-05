@@ -22,18 +22,20 @@ class Resizer extends React.Component {
   render () {
     const { itemId } = this.props
     const { selected } = this.state
+    const theme = this.props.mainComponent.props.theme
+    const animationLevel = this.props.mainComponent.state.animationLevel
 
+    const bgColorHex = theme.palette[theme.backgrounds.highlight]
     const backgroundColor = (w, h) => {
       if (w === selected.w && h === selected.h) {
-        return { backgroundColor: 'rgba(0,0,0,.4)' }
+        return { backgroundColor: bgColorHex, opacity: 0.7 }
       }
       if (w <= selected.w && h <= selected.h) {
-        return { backgroundColor: 'rgba(0,0,0,.2)' }
+        return { backgroundColor: bgColorHex, opacity: 0.4 }
       }
       return { }
     }
 
-    // TODO !0: animationLevel adaptations
     return (
       <Modal id={`resizer-${itemId.substr(-36)}`} header='Change size'>
         <div className='resizer'>
@@ -55,7 +57,10 @@ class Resizer extends React.Component {
                   {[1, 2, 3, 4, 5, 6].map((w) => (
                     <td key={`${w}-${h}`}>
                       <button
-                        className={cx('btn btn-floating btn-small waves-effect waves-light', { disabled: !this.isDimensionAvailable(w, h) })}
+                        className={cx('btn btn-floating btn-small',
+                          animationLevel >= 2 ? 'waves-effect waves-light' : '',
+                          { disabled: !this.isDimensionAvailable(w, h) }
+                        )}
                         onClick={this.selectSize.bind(this, w, h)}
                       >
                         {w}-{h}

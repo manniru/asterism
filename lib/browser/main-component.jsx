@@ -151,7 +151,7 @@ class MainComponent extends React.Component {
         {items.length ? (
           <Gridifier editable={editMode} sortDispersion orderHandler={this.itemManager.orderHandler}
             toggleTime={animationLevel >= 2 ? 500 : 1} coordsChangeTime={animationLevel >= 2 ? 300 : 1}
-            gridResizeDelay={animationLevel >= 2 ? 80 : 160}>
+            gridResizeDelay={animationLevel >= 2 ? 80 : 160} ref={(c) => { this.gridComponent = c }}>
             {items}
           </Gridifier>
         ) : null}
