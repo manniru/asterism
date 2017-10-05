@@ -14,7 +14,7 @@
     "prepublishOnly": "npm run dist",
     "doc:jsdoc": "jsdoc --package package.json --readme README.md --destination doc/jsdoc/ lib/plugins/*",
     "doc:coverage": "cross-env NODE_ENV=test nyc --require babel-core/register --reporter=lcov mocha && rimraf .nyc_output",
-    "doc": "rimraf doc && npm run doc:jsdoc && groc && npm run doc:coverage",
+    "doc": "rimraf doc/jsdoc && rimraf doc/coverage && npm run doc:jsdoc && npm run doc:coverage",
     "lint": "standard --verbose | snazzy",
     "test": "npm run dist && cross-env NODE_ENV=test mocha --require ignore-styles",
     "validate": "npm ls"
@@ -130,7 +130,6 @@
     "chai": "^4.1.0",
     "cross-env": "^1.0.7",
     "enzyme": "^2.8.2",
-    "groc": "^0.8.0",
     "ignore-styles": "^5.0.1",
     "jsdoc": "^3.5.3",
     "jsdom": "^11.1.0",

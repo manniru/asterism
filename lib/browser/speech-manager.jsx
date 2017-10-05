@@ -11,7 +11,7 @@ export default class SpeechManager {
   }
 
   speech () {
-    console.log('TODO') // TODO !2
+    console.log('TODO') // TODO !5
   }
 
   getComponent () {
