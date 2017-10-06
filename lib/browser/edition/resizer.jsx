@@ -37,13 +37,13 @@ class Resizer extends React.Component {
     }
 
     return (
-      <Modal id={`resizer-${itemId.substr(-36)}`} header='Change size'>
+      <Modal id={`resizer-${itemId.substr(-36)}`} header='Size'>
         <div className='resizer'>
           <table className='background'>
             <tbody>
-              {[1, 2, 3, 4, 5, 6].map((h) => (
+              {[1, 2, 3, 4, 5].map((h) => (
                 <tr key={`0-${h}`}>
-                  {[1, 2, 3, 4, 5, 6].map((w) => (
+                  {[1, 2, 3].map((w) => (
                     <td key={`${w}-${h}`}><div style={backgroundColor(w, h)} /></td>
                   ))}
                 </tr>
@@ -52,9 +52,9 @@ class Resizer extends React.Component {
           </table>
           <table>
             <tbody>
-              {[1, 2, 3, 4, 5, 6].map((h) => (
+              {[1, 2, 3, 4, 5].map((h) => (
                 <tr key={`0-${h}`}>
-                  {[1, 2, 3, 4, 5, 6].map((w) => (
+                  {[1, 2, 3].map((w) => (
                     <td key={`${w}-${h}`}>
                       <button
                         className={cx('btn btn-floating btn-small',

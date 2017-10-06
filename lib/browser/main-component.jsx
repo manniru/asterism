@@ -75,7 +75,7 @@ class MainComponent extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    // If an ItemSettingPAnel should be displayed
+    // If an ItemSettingPanel should be displayed
     if (this.state.itemSettingPanel && !prevState.itemSettingPanel) {
       $('#item-setting-modal').modal('open')
 

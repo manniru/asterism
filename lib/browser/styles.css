@@ -131,7 +131,7 @@
 }
 
 .modal[id^='resizer-'] {
-  width: 254px;
+  width: 154px;
 }
 
 .modal[id^='resizer-'] .modal-footer {
