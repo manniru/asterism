@@ -6,7 +6,6 @@
   "contributors": [],
   "license": "CC-BY-NC-SA-4.0",
   "scripts": {
-    "start:component": "webpack-dev-server --config example/webpack.config.js --no-info --progress --inline",
     "start:dist": "npm run dist && cross-env NODE_ENV=production node example/dist.js",
     "start": "cross-env NODE_ENV=development nodemon --watch lib/server example/hot-reload.js",
     "start:debug": "cross-env NODE_ENV=development DEBUG=* nodemon --watch lib/server example/hot-reload.js",

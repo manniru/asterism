@@ -32,6 +32,7 @@ class Settings extends React.Component {
     }
 
     // Plugin settings panels
+    // TODO !1: move them ?
     this.pluginSettingsPanels = (process.env.ASTERISM_SETTINGS_PANELS || []).map((toRequire) => {
       return {
         'Panel': plugins.settingsPanels[toRequire.module].default,
