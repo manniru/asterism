@@ -3,7 +3,7 @@
 import React from 'react'
 import { Button, Input, Row } from 'react-materialize'
 
-import ItemSettingPanel from '../../item-setting-panel'
+import { ItemSettingPanel } from 'asterism-plugin-library'
 import RefreshButtonItem from './item'
 
 class RefreshButtonSettingPanel extends ItemSettingPanel {

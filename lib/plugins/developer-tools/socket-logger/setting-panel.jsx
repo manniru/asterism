@@ -3,7 +3,7 @@
 import React from 'react'
 import { Button, Row } from 'react-materialize'
 
-import ItemSettingPanel from '../../item-setting-panel'
+import { ItemSettingPanel } from 'asterism-plugin-library'
 import SocketLoggerItem from './item'
 
 class SocketLoggerSettingPanel extends ItemSettingPanel {

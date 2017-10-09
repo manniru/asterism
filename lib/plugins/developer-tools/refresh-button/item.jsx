@@ -4,9 +4,7 @@ import cx from 'classnames'
 import React from 'react'
 import { Button, Icon } from 'react-materialize'
 
-import Item from '../../item'
-
-// import '../styles.scss'
+import { Item } from 'asterism-plugin-library'
 
 class RefreshButtonItem extends Item {
   render () {

@@ -5,7 +5,7 @@ import debounce from 'debounce'
 import React from 'react'
 import { Button, Icon, Modal } from 'react-materialize'
 
-import Item from '../../item'
+import { Item } from 'asterism-plugin-library'
 
 import styles from './styles.css.js'
 
