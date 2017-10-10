@@ -1,6 +1,6 @@
 {
   "name": "asterism",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Extensible & dynamic dashboard platform",
   "author": "Xavier Gouley <gxapplications@gmail.com>",
   "contributors": [],
@@ -11,9 +11,6 @@
     "start:debug": "cross-env NODE_ENV=development DEBUG=* nodemon --watch lib/server example/hot-reload.js",
     "dist": "rimraf dist && babel lib --out-dir dist",
     "prepublishOnly": "npm run dist",
-    "doc:jsdoc": "jsdoc --package package.json --readme README.md --destination doc/jsdoc/ lib/plugins/*",
-    "doc:coverage": "cross-env NODE_ENV=test nyc --require babel-core/register --reporter=lcov mocha && rimraf .nyc_output",
-    "doc": "rimraf doc/jsdoc && rimraf doc/coverage && npm run doc:jsdoc && npm run doc:coverage",
     "lint": "standard --verbose | snazzy",
     "test": "npm run dist && cross-env NODE_ENV=test mocha --require ignore-styles",
     "validate": "npm ls"
@@ -77,16 +74,8 @@
     "lint",
     "test"
   ],
-  "nyc": {
-    "lines": 40,
-    "check-coverage": true,
-    "report-dir": "./doc/coverage",
-    "include": [
-      "lib/**"
-    ]
-  },
   "dependencies": {
-    "asterism-plugin-library": "^0.3.0",
+    "asterism-plugin-library": ">= 1.0.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-css-modules-transform": "^1.2.7",
     "babel-preset-es2017-node7": "^0.5.2",
@@ -134,11 +123,9 @@
     "cross-env": "^1.0.7",
     "enzyme": "^2.8.2",
     "ignore-styles": "^5.0.1",
-    "jsdoc": "^3.5.3",
     "jsdom": "^11.1.0",
     "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
-    "nyc": "^11.2.1",
     "precommit-hook": "^3.0.0",
     "react-addons-test-utils": "^15.6.0",
     "react-dom": "^15.6.1",
@@ -148,7 +135,6 @@
     "webpack-dev-server": "^2.7.1"
   },
   "directories": {
-    "doc": "./doc",
     "lib": "./lib",
     "dist": "./dist"
   },
