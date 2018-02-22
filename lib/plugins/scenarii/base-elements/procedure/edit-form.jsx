@@ -21,7 +21,7 @@ BrowserProcedureEditForm.propTypes = {
   theme: PropTypes.object.isRequired,
   animationLevel: PropTypes.number.isRequired,
   instance: PropTypes.object.isRequired,
-  scenariiService: PropTypes.object.isRequired
+  services: PropTypes.func.isRequired
 }
 
 BrowserProcedureEditForm.label = 'Basic procedure'

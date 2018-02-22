@@ -33,7 +33,7 @@ class ScenariiEditPanel extends React.Component {
   }
 
   render () {
-    const { theme, animationLevel } = this.props
+    const { theme, animationLevel, services } = this.props
     const { EditForm, currentTab } = this.state
     return (
       <div id='scenarii-edit-panel' className={cx(styles.ScenariiEditPanel, { 'editFormOpened': !!EditForm }, 'coloring-header-tabs')}>
@@ -92,7 +92,7 @@ class ScenariiEditPanel extends React.Component {
         <div className={cx('editForm', theme.backgrounds.body)}>
           {EditForm ? (
             <EditForm ref={(c) => { this._editFormInstance = c }}
-              instance={this._editInstance} scenariiService={this.scenariiService}
+              instance={this._editInstance} services={services}
               theme={theme} animationLevel={animationLevel}
             />
           ) : null}
