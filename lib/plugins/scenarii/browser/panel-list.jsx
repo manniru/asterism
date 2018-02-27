@@ -9,7 +9,7 @@ class PanelList extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      instances: [], // is dynamic, can be refreshed
+      instances: null, // is dynamic, can be refreshed
       types: [], // should be static, no refresh provided
       deleteConfirm: null
     }
@@ -136,7 +136,7 @@ class PanelList extends React.Component {
     const testingWavesPositive = (animationLevel >= 2 ? 'btn waves-effect waves-light' : 'btn') + ` ${theme.feedbacks.success}`
     const testingWavesNegative = (animationLevel >= 2 ? 'btn waves-effect waves-light' : 'btn') + ` ${theme.feedbacks.error}`
 
-    if (types.length === 0 && instances.length === 0) {
+    if (instances === null || types.length === 0) {
       return (<div />)
     }
 
