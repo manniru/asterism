@@ -143,7 +143,7 @@ class PanelList extends React.Component {
     return (
       <div className={cx('collection', { 'with-header': instances.length === 0 })}>
         {instances.length === 0 ? this.props.children : null}
-        {instances.map(({ instance, onClick, onDelete, onTest, testing }, idx) => (
+        {instances.map(({ instance, onClick, onDelete, onTest, testing }, idx) => instance ? (
           <a key={instance.instanceId} href='javascript:void(0)' onClick={onClick}
             className={cx('collection-item', waves)}>
             <div href='javascript:void(0)' onClick={onDelete}
@@ -162,7 +162,7 @@ class PanelList extends React.Component {
             <span className='title truncate'>{instance.name}</span>
             <span className='truncate'>{instance.shortLabel}</span>
           </a>
-        ))}
+        ) : null)}
         {types.map(({ type, onClick }, idx) => (
           <a key={type.name} href='javascript:void(0)' onClick={onClick}
             className={cx('collection-item active avatar', waves)}>
