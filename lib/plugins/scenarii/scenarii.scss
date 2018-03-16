@@ -239,9 +239,15 @@
         top: 0.2rem;
       }
 
-      & > div:last-of-type {
+      & > div:first-of-type { /* Action EditForm root */
         min-height: 4em;
-        border: 1px solid blue;
+        margin: 0 !important;
+        padding-left: 1.8rem;
+        padding-right: 1.8rem;
+
+        & .hide-in-procedure {
+          display: none;
+        }
       }
     }
 

@@ -1,12 +1,14 @@
 'use strict'
 
 import cx from 'classnames'
+import Joi from 'joi'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Input, Row } from 'react-materialize'
 import uuid from 'uuid'
-
 import { Scenarii } from 'asterism-plugin-library'
+
+import schemaProcedure from './schema'
 
 const { ActionsDropdown } = Scenarii
 
@@ -14,20 +16,23 @@ class BrowserProcedureEditForm extends React.Component {
   constructor (props) {
     super(props)
 
+    this.defaultName = Joi.reach(schemaProcedure, 'name')._flags.default
     this.scenariiService = props.services()['asterism-scenarii']
 
     this.state = {
-      deleteSequenceConfirm: null
+      deleteElementConfirm: null
     }
   }
 
   render () {
     const { instance } = this.props
+    const defaultValue = instance.data.name === this.defaultName ? '' : instance.data.name
+
     return (
       <div>
-        <Row className='section card form'>
+        <Row className='section card form hide-in-procedure'>
           <Input placeholder='Give a name to quickly identify your action' s={12} label='Name'
-            defaultValue={instance.data.name} onChange={(e) => { instance.data.name = e.currentTarget.value }} />
+            defaultValue={defaultValue} onChange={(e) => { instance.data.name = e.currentTarget.value }} />
         </Row>
 
         <Row className='section procedurePanel'>
@@ -38,7 +43,7 @@ class BrowserProcedureEditForm extends React.Component {
   }
 
   renderScript (script) {
-    const { deleteSequenceConfirm } = this.state
+    const { deleteElementConfirm } = this.state
     const waves = this.props.animationLevel >= 2 ? 'waves-effect waves-light' : undefined
     const deleteWaves = this.props.animationLevel >= 2 ? 'btn-flat waves-effect waves-red' : 'btn-flat'
     const deleteWavesConfirm = (this.props.animationLevel >= 2 ? 'btn waves-effect waves-light' : 'btn') + ` ${this.props.theme.actions.negative}`
@@ -48,8 +53,8 @@ class BrowserProcedureEditForm extends React.Component {
       <ul>
         {sequences.map((sequence, idx) => (
           <li key={uuid.v4()}>
-            <div className={cx('remove sequence', (deleteSequenceConfirm === sequence) ? deleteWavesConfirm : deleteWaves)}
-              onClick={this.deleteSequence.bind(this, script, sequence, idx)}>
+            <div className={cx('remove sequence', (deleteElementConfirm === sequence) ? deleteWavesConfirm : deleteWaves)}
+              onClick={this.deleteSequence.bind(this, script, idx, sequence)}>
               <i className='material-icons'>delete</i>
             </div>
             {sequence}
@@ -64,27 +69,39 @@ class BrowserProcedureEditForm extends React.Component {
 
   renderSequence (sequence, key) {
     const { theme, animationLevel, instance, services } = this.props
-    // const { deleteSequenceConfirm } = this.state
+    const { deleteElementConfirm } = this.state
     const waves = this.props.animationLevel >= 2 ? 'waves-effect waves-light' : undefined
-    // const deleteWaves = this.props.animationLevel >= 2 ? 'btn-flat waves-effect waves-red' : 'btn-flat'
-    // const deleteWavesConfirm = (this.props.animationLevel >= 2 ? 'btn waves-effect waves-light' : 'btn') + ` ${this.props.theme.actions.negative}`
+    const deleteWaves = this.props.animationLevel >= 2 ? 'btn-flat waves-effect waves-red' : 'btn-flat'
+    const deleteWavesConfirm = (this.props.animationLevel >= 2 ? 'btn waves-effect waves-light' : 'btn') + ` ${this.props.theme.actions.negative}`
 
-    const scriptsOrActions = sequence.map((e) => (typeof e === 'string') ? this.renderAction(e) : this.renderScript(e))
+    const scriptsOrActions = sequence.map((e, idx) => (typeof e !== 'string')
+      ? [
+        this.renderScript(e),
+        <div className={cx('removeAction', (deleteElementConfirm === e) ? deleteWavesConfirm : deleteWaves)}
+          onClick={this.deleteScript.bind(this, sequence, idx, e)}><i className='material-icons'>delete</i></div>,
+        <div className='globalizeAction'><i className='material-icons'>public</i> TODO</div>
+      ] : [
+        this.renderAction(e),
+        <div className={cx('removeAction', (deleteElementConfirm === e) ? deleteWavesConfirm : deleteWaves)}
+          onClick={this.deleteAction.bind(this, sequence, idx, e)}><i className='material-icons'>delete</i></div>,
+        <div className='globalizeAction'><i className='material-icons'>public</i> TODO</div>
+      ]
+    )
     return (
       <ol data-sequenceKey={key}>
         {scriptsOrActions.map((scriptOrAction) => (
-          <li key={uuid.v4()}>
+          <li key={uuid.v4()} >
+            {scriptOrAction[0]}
             <div className='orderHandler'><i className='material-icons'>reorder</i></div>
-            <div className='removeAction'><i className='material-icons'>delete</i></div>
-            <div className='globalizeAction'><i className='material-icons'>public</i></div>
-            {scriptOrAction}
+            {scriptOrAction[1]}
+            {scriptOrAction[2]}
           </li>
         ))}
 
         {scriptsOrActions.length < 32 ? (
           <li className='add action'>
             <ActionsDropdown onChange={this.addAction.bind(this, sequence)} theme={theme} animationLevel={animationLevel}
-              services={services} parentIdForNewInstance={instance.instanceId}
+              services={services} parentIdForNewInstance={instance.instanceId} noCreationPanel
               icon={null} label='Add a script' dropdownId={uuid.v4()} />
           </li>
         ) : null}
@@ -101,40 +118,53 @@ class BrowserProcedureEditForm extends React.Component {
   }
 
   renderAction (actionId) {
-    // TODO !0: add 2 btns: "delete" & "make it global" in the corner...
-
     if (this.state[`actionEditPanel-${actionId}`]) {
       const ActionEditForm = this.state[`actionEditPanel-${actionId}`].EditForm
-
       return (
         <ActionEditForm
-          instance={this.state.actionEditPanels[actionId].action} services={this.props.services}
+          instance={this.state[`actionEditPanel-${actionId}`]} services={this.props.services}
           theme={this.props.theme} animationLevel={this.props.animationLevel} />
       )
     } else {
       this.scenariiService.getActionInstance(actionId, true)
       .then((action) => {
-        console.log('#######', action) // TODO !0 action et action.EditForm ?
+        this.setState({
+          [`actionEditPanel-${actionId}`]: action
+        })
       })
-
-      return (
-        <div>
-          Loading (TODO !0)
-        </div>
-      )
+      return null
     }
   }
 
-  deleteAction (actionId) {
-    // TODO !0: remove from instance.data, but also if action has instance ID as parentId, then remove from DB.
+  deleteAction (sequence, idx, action) {
+    const e = this.state.deleteElementConfirm
+    if (!e || e.length !== 3 || e[0] !== action || e[1] !== sequence || e[2] !== idx) {
+      this.setState({
+        deleteElementConfirm: [action, sequence, idx]
+      })
+      return
+    }
+
+    sequence.splice(idx, 1) // removes 1 element from idx position
+    this.forceUpdate()
   }
+
+  // TODO !0: "make it global" button in the corner...
 
   addScript (sequence) {
     // TODO !1
   }
 
-  deleteScript (sequence, script) {
-    // TODO !1: confirm feature
+  deleteScript (sequence, idx, script) {
+    const e = this.state.deleteElementConfirm
+    if (!e || e.length !== 3 || e[0] !== script || e[1] !== sequence || e[2] !== idx) {
+      this.setState({
+        deleteElementConfirm: [script, sequence, idx]
+      })
+      return
+    }
+
+    console.log('todo')
     // TODO !1: warning, cascading delete, make all in the right order...
   }
 
@@ -142,8 +172,16 @@ class BrowserProcedureEditForm extends React.Component {
     // TODO !2
   }
 
-  deleteSequence (script, sequence, index) {
-    // TODO !2: confirm feature
+  deleteSequence (script, idx, sequence) {
+    const e = this.state.deleteElementConfirm
+    if (!e || e.length !== 3 || e[0] !== sequence || e[1] !== script || e[2] !== idx) {
+      this.setState({
+        deleteElementConfirm: [sequence, script, idx]
+      })
+      return
+    }
+
+    console.log('todo')
     // TODO !2: do the job: warning, cascading delete, make all in the right order...
   }
 
