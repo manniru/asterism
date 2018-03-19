@@ -22,6 +22,15 @@ class BrowserProcedureEditForm extends React.Component {
     this.state = {
       deleteElementConfirm: null
     }
+    this._mounted = false
+  }
+
+  componentDidMount () {
+    this._mounted = true
+  }
+
+  componentWillUnmount () {
+    this._mounted = false
   }
 
   render () {
@@ -43,18 +52,17 @@ class BrowserProcedureEditForm extends React.Component {
   }
 
   renderScript (script) {
-    const { deleteElementConfirm } = this.state
     const waves = this.props.animationLevel >= 2 ? 'waves-effect waves-light' : undefined
     const deleteWaves = this.props.animationLevel >= 2 ? 'btn-flat waves-effect waves-red' : 'btn-flat'
     const deleteWavesConfirm = (this.props.animationLevel >= 2 ? 'btn waves-effect waves-light' : 'btn') + ` ${this.props.theme.actions.negative}`
 
     const sequences = Object.entries(script).map(([sequenceKey, sequence]) => this.renderSequence(sequence, sequenceKey))
     return (
-      <ul>
+      <ul className='script'>
         {sequences.map((sequence, idx) => (
           <li key={uuid.v4()}>
-            <div className={cx('remove sequence', (deleteElementConfirm === sequence) ? deleteWavesConfirm : deleteWaves)}
-              onClick={this.deleteSequence.bind(this, script, idx, sequence)}>
+            <div className={cx('remove sequence', this.isDeleteSequenceConfirmation(sequence.props['data-sequenceKey'], script, idx) ? deleteWavesConfirm : deleteWaves)}
+              onClick={this.deleteSequence.bind(this, script, idx, sequence.props['data-sequenceKey'])}>
               <i className='material-icons'>delete</i>
             </div>
             {sequence}
@@ -69,7 +77,6 @@ class BrowserProcedureEditForm extends React.Component {
 
   renderSequence (sequence, key) {
     const { theme, animationLevel, instance, services } = this.props
-    const { deleteElementConfirm } = this.state
     const waves = this.props.animationLevel >= 2 ? 'waves-effect waves-light' : undefined
     const deleteWaves = this.props.animationLevel >= 2 ? 'btn-flat waves-effect waves-red' : 'btn-flat'
     const deleteWavesConfirm = (this.props.animationLevel >= 2 ? 'btn waves-effect waves-light' : 'btn') + ` ${this.props.theme.actions.negative}`
@@ -77,14 +84,20 @@ class BrowserProcedureEditForm extends React.Component {
     const scriptsOrActions = sequence.map((e, idx) => (typeof e !== 'string')
       ? [
         this.renderScript(e),
-        <div className={cx('removeAction', (deleteElementConfirm === e) ? deleteWavesConfirm : deleteWaves)}
+        <div className={cx('removeAction', this.isDeleteScriptConfirmation(e, sequence, idx) ? deleteWavesConfirm : deleteWaves)}
           onClick={this.deleteScript.bind(this, sequence, idx, e)}><i className='material-icons'>delete</i></div>,
-        <div className='globalizeAction'><i className='material-icons'>public</i> TODO</div>
+        null
       ] : [
         this.renderAction(e),
-        <div className={cx('removeAction', (deleteElementConfirm === e) ? deleteWavesConfirm : deleteWaves)}
-          onClick={this.deleteAction.bind(this, sequence, idx, e)}><i className='material-icons'>delete</i></div>,
-        <div className='globalizeAction'><i className='material-icons'>public</i> TODO</div>
+        <div className={cx('removeAction', this.isDeleteActionConfirmation(e, sequence, idx) ? deleteWavesConfirm : deleteWaves)}
+          onClick={this.deleteAction.bind(this, sequence, idx, e)}>
+          <i className='material-icons'>{this.isActionGlobal(e) ? 'clear' : 'delete'}</i>
+        </div>,
+        this.isActionGlobal(e)
+          ? <div className='globalizeAction btn-flat disabled'><i className='material-icons'>public</i></div>
+          : <div className={cx('globalizeAction btn-flat', waves)} onClick={this.globalizeAction.bind(this, sequence, idx, e)}>
+            <i className='material-icons'>public</i>
+          </div>
       ]
     )
     return (
@@ -102,7 +115,7 @@ class BrowserProcedureEditForm extends React.Component {
           <li className='add action'>
             <ActionsDropdown onChange={this.addAction.bind(this, sequence)} theme={theme} animationLevel={animationLevel}
               services={services} parentIdForNewInstance={instance.instanceId} noCreationPanel
-              icon={null} label='Add a script' dropdownId={uuid.v4()} />
+              icon={null} label='Add an action' dropdownId={uuid.v4()} />
           </li>
         ) : null}
         {scriptsOrActions.length < 32 ? (
@@ -136,34 +149,53 @@ class BrowserProcedureEditForm extends React.Component {
     }
   }
 
-  deleteAction (sequence, idx, action) {
+  isActionGlobal (actionId) {
+    const action = this.state[`actionEditPanel-${actionId}`]
+    if (action && action.parent === this.props.instance.instanceId) {
+      return false
+    }
+
+    return true // by default if not fetched yet
+  }
+
+  isDeleteActionConfirmation (actionId, sequence, idx) {
     const e = this.state.deleteElementConfirm
-    if (!e || e.length !== 3 || e[0] !== action || e[1] !== sequence || e[2] !== idx) {
-      this.setState({
-        deleteElementConfirm: [action, sequence, idx]
-      })
+    return (e && e.length === 3 && e[0] === actionId && e[1] === sequence && e[2] === idx)
+  }
+
+  deleteAction (sequence, idx, actionId) {
+    if (!this.isDeleteActionConfirmation(actionId, sequence, idx)) {
+      this._deleteConfirm([actionId, sequence, idx])
       return
     }
 
+    this._deleteConfirm(null)
     sequence.splice(idx, 1) // removes 1 element from idx position
     this.forceUpdate()
   }
 
-  // TODO !0: "make it global" button in the corner...
+  globalizeAction (sequence, idx, action) {
+    console.log('###', idx)
+    // TODO !0: action "make it global" button in the corner... remove parent attr, save it to server side, refresh here.
+  }
 
   addScript (sequence) {
-    // TODO !1
+    sequence.push({ 'a': [] })
+    this.forceUpdate()
+  }
+
+  isDeleteScriptConfirmation (script, sequence, idx) {
+    const e = this.state.deleteElementConfirm
+    return (e && e.length === 3 && e[0] === script && e[1] === sequence && e[2] === idx)
   }
 
   deleteScript (sequence, idx, script) {
-    const e = this.state.deleteElementConfirm
-    if (!e || e.length !== 3 || e[0] !== script || e[1] !== sequence || e[2] !== idx) {
-      this.setState({
-        deleteElementConfirm: [script, sequence, idx]
-      })
+    if (!this.isDeleteScriptConfirmation(script, sequence, idx)) {
+      this._deleteConfirm([script, sequence, idx])
       return
     }
 
+    this._deleteConfirm(null)
     console.log('todo')
     // TODO !1: warning, cascading delete, make all in the right order...
   }
@@ -172,21 +204,38 @@ class BrowserProcedureEditForm extends React.Component {
     // TODO !2
   }
 
-  deleteSequence (script, idx, sequence) {
+  isDeleteSequenceConfirmation (sequenceKey, script, idx) {
     const e = this.state.deleteElementConfirm
-    if (!e || e.length !== 3 || e[0] !== sequence || e[1] !== script || e[2] !== idx) {
-      this.setState({
-        deleteElementConfirm: [sequence, script, idx]
-      })
+    return (e && e.length === 3 && e[0] === sequenceKey && e[1] === script && e[2] === idx)
+  }
+
+  deleteSequence (script, idx, sequenceKey) {
+    if (!this.isDeleteSequenceConfirmation(sequenceKey, script, idx)) {
+      this._deleteConfirm([sequenceKey, script, idx])
       return
     }
 
+    this._deleteConfirm(null)
     console.log('todo')
     // TODO !2: do the job: warning, cascading delete, make all in the right order...
   }
 
   reorderSequence () {
     // TODO !2
+  }
+
+  _deleteConfirm (element) {
+    clearTimeout(this._deleteTimer)
+    this.setState({
+      deleteElementConfirm: element
+    })
+    if (element) {
+      this._deleteTimer = setTimeout(() => {
+        if (this._mounted) {
+          this.setState({ deleteElementConfirm: null })
+        }
+      }, 3000)
+    }
   }
 }
 

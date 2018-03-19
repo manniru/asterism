@@ -144,8 +144,8 @@
   font-size: 1.5em;
   padding: 0 !important;
 
-  & ul { /* script */
-    padding: 0.2rem 0 0.01rem 0.4rem;
+  & ul.script { /* script */
+    padding: 2.8rem 0 0.01rem 0.4rem;
     margin: 0;
     border-left: 2px solid white;
 
@@ -182,7 +182,7 @@
     }
   }
 
-  & > ul {
+  & > ul.script {
     padding: 0;
     border-left: none;
   }
@@ -227,23 +227,30 @@
 
       & > .removeAction {
         display: inline-block;
+        padding: 0 9px;
         position: absolute;
         left: 0.2rem;
         top: 3rem;
       }
 
+      & > ul.script ~ .removeAction {
+        left: 4rem;
+        top: 0;
+      }
+
       & > .globalizeAction {
         display: inline-block;
         position: absolute;
+        padding: 0 9px;
         right: 0.2rem;
         top: 0.2rem;
       }
 
-      & > div:first-of-type { /* Action EditForm root */
+      & > div:first-of-type:not(.orderHandler) { /* Action EditForm root */
         min-height: 4em;
         margin: 0 !important;
-        padding-left: 1.8rem;
-        padding-right: 1.8rem;
+        padding-left: 2.4rem;
+        padding-right: 2.4rem;
 
         & .hide-in-procedure {
           display: none;
@@ -294,7 +301,7 @@
   }
 
   /* Stops at 4th level script */
-  ul > li > ol > li > ul > li > ol > li > ul > li > ol > li.add.script {
+  ul.script > li > ol > li > ul.script > li > ol > li > ul.script > li > ol > li.add.script {
     display: none;
   }
 }
