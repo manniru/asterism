@@ -4,7 +4,8 @@ import cx from 'classnames'
 import Joi from 'joi'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Input, Row } from 'react-materialize'
+import { Icon, Input, Row } from 'react-materialize'
+import sortable from 'html5sortable/dist/html5sortable.es.js'
 import uuid from 'uuid'
 import { Scenarii } from 'asterism-plugin-library'
 
@@ -27,10 +28,24 @@ class BrowserProcedureEditForm extends React.Component {
 
   componentDidMount () {
     this._mounted = true
+
+    sortable('.procedurePanel ol', {
+      items: ':not(.add)',
+      handle: '.orderHandler',
+      forcePlaceholderSize: true
+    })[0].addEventListener('sortupdate', this.reorderSequence.bind(this))
   }
 
   componentWillUnmount () {
     this._mounted = false
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    sortable('.procedurePanel ol', {
+      items: ':not(.add)',
+      handle: '.orderHandler',
+      forcePlaceholderSize: true
+    }).forEach((e) => e.addEventListener('sortupdate', this.reorderSequence.bind(this)))
   }
 
   render () {
@@ -95,7 +110,7 @@ class BrowserProcedureEditForm extends React.Component {
         </div>,
         this.isActionGlobal(e)
           ? <div className='globalizeAction btn-flat disabled'><i className='material-icons'>public</i></div>
-          : <div className={cx('globalizeAction btn-flat', waves)} onClick={this.globalizeAction.bind(this, sequence, idx, e)}>
+          : <div className={cx('globalizeAction btn-flat', waves)} onClick={this.globalizeAction.bind(this, e)}>
             <i className='material-icons'>public</i>
           </div>
       ]
@@ -115,6 +130,7 @@ class BrowserProcedureEditForm extends React.Component {
           <li className='add action'>
             <ActionsDropdown onChange={this.addAction.bind(this, sequence)} theme={theme} animationLevel={animationLevel}
               services={services} parentIdForNewInstance={instance.instanceId} noCreationPanel
+              typeFilter={(e) => e.id !== 'base-procedure'} instanceFilter={(e) => e.typeId !== 'base-procedure'}
               icon={null} label='Add an action' dropdownId={uuid.v4()} />
           </li>
         ) : null}
@@ -131,19 +147,38 @@ class BrowserProcedureEditForm extends React.Component {
   }
 
   renderAction (actionId) {
-    if (this.state[`actionEditPanel-${actionId}`]) {
-      const ActionEditForm = this.state[`actionEditPanel-${actionId}`].EditForm
+    if (this.state[`actionEditPanel-${actionId}`] !== undefined) {
+      const action = this.state[`actionEditPanel-${actionId}`]
+      if (action) {
+        const ActionEditForm = action.EditForm
+        return (
+          <ActionEditForm
+            instance={this.state[`actionEditPanel-${actionId}`]} services={this.props.services}
+            theme={this.props.theme} animationLevel={this.props.animationLevel} />
+        )
+      }
+
+      // not found case
       return (
-        <ActionEditForm
-          instance={this.state[`actionEditPanel-${actionId}`]} services={this.props.services}
-          theme={this.props.theme} animationLevel={this.props.animationLevel} />
+        <div className='section card red-text'>
+          <Icon small>warning</Icon> <Icon small>healing</Icon>&nbsp;
+          The action that was here seems to be missing. This avoid the procedure to be run properly, so you have to fix this.
+        </div>
       )
     } else {
       this.scenariiService.getActionInstance(actionId, true)
       .then((action) => {
         this.setState({
-          [`actionEditPanel-${actionId}`]: action
+          [`actionEditPanel-${actionId}`]: action || null // force null if undefined (not found)
         })
+        this.props.instance.editedActions = this.props.instance.editedActions || {}
+        this.props.instance.editedActions[actionId] = action
+      })
+      .catch((error) => {
+        this.setState({
+          [`actionEditPanel-${actionId}`]: null
+        })
+        console.error(error)
       })
       return null
     }
@@ -170,13 +205,23 @@ class BrowserProcedureEditForm extends React.Component {
     }
 
     this._deleteConfirm(null)
+    this._deleteAction(sequence, idx, actionId)
+  }
+  _deleteAction (sequence, idx, actionId) {
     sequence.splice(idx, 1) // removes 1 element from idx position
-    this.forceUpdate()
+
+    const { ...newState } = this.state
+    delete newState[`actionEditPanel-${actionId}`]
+    this.setState(newState)
   }
 
-  globalizeAction (sequence, idx, action) {
-    console.log('###', idx)
-    // TODO !0: action "make it global" button in the corner... remove parent attr, save it to server side, refresh here.
+  globalizeAction (actionId) {
+    const action = this.state[`actionEditPanel-${actionId}`]
+    if (action && action.parent === this.props.instance.instanceId) {
+      action.parent = null
+      this.scenariiService.setActionInstance(action, null)
+      .then(() => this.forceUpdate())
+    }
   }
 
   addScript (sequence) {
@@ -196,12 +241,18 @@ class BrowserProcedureEditForm extends React.Component {
     }
 
     this._deleteConfirm(null)
-    console.log('todo')
-    // TODO !1: warning, cascading delete, make all in the right order...
+    this._deleteScript(sequence, idx)
+    this.forceUpdate()
+  }
+  _deleteScript (sequence, idx) {
+    const removedScript = sequence.splice(idx, 1)[0] // removes 1 element from idx position
+    Object.entries(removedScript).map(([sequenceKey, sequence]) => this._deleteSequence(removedScript, sequenceKey))
   }
 
   addSequence (script) {
-    // TODO !2
+    const key = uuid.v4()
+    script[key] = []
+    this.forceUpdate()
   }
 
   isDeleteSequenceConfirmation (sequenceKey, script, idx) {
@@ -216,19 +267,38 @@ class BrowserProcedureEditForm extends React.Component {
     }
 
     this._deleteConfirm(null)
-    console.log('todo')
-    // TODO !2: do the job: warning, cascading delete, make all in the right order...
+    this._deleteSequence(script, sequenceKey)
+    this.forceUpdate()
+  }
+  _deleteSequence (script, sequenceKey) {
+    const sequence = script[sequenceKey]
+    sequence.forEach((scriptOrAction, i) => typeof scriptOrAction === 'string'
+      ? this._deleteAction(sequence, i, scriptOrAction)
+      : this._deleteScript(sequence, i))
+
+    delete script[sequenceKey]
   }
 
-  reorderSequence () {
-    // TODO !2
+  reorderSequence (event) {
+    const detail = event.detail
+    console.log('###', detail.startParent, detail.oldElementIndex, detail.elementIndex)
+    // TODO !2: event handling here to store move (https://github.com/lukasoppermann/html5sortable)
+
+    /*
+     passage de idx 0 à 1:
+     oldElementIndex: 0
+     elementIndex: 2 (its a bug). Consider 1
+     ==> if (oldElementIndex < elementIndex) { array.splice(elementIndex + 1, 0, e); array.splice(oldElementIndex, 1); } else { ??? }
+    */
   }
 
   _deleteConfirm (element) {
     clearTimeout(this._deleteTimer)
-    this.setState({
-      deleteElementConfirm: element
-    })
+    if (this.state.deleteElementConfirm !== element) {
+      this.setState({
+        deleteElementConfirm: element
+      })
+    }
     if (element) {
       this._deleteTimer = setTimeout(() => {
         if (this._mounted) {
