@@ -15,7 +15,6 @@ class BrowserWaitEditForm extends React.Component {
       <Row className='section card form'>
         TODO !1
         <Input name='on1' type='date' />
-        <Input name='on2' type='time' />
       </Row>
     )
   }
