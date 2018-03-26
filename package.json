@@ -1,6 +1,6 @@
 {
   "name": "asterism",
-  "version": "0.15.8",
+  "version": "0.15.9",
   "description": "Extensible & dynamic dashboard platform",
   "author": "Xavier Gouley <gxapplications@gmail.com>",
   "contributors": [],
@@ -114,7 +114,7 @@
     "prop-types": "15.6.x",
     "react": "15.6.x",
     "react-color": "2.13.x",
-    "react-gridifier": ">= 0.4.2",
+    "react-gridifier": "^0.4.2",
     "react-hot-loader": "3.1.x",
     "react-materialize": "1.0.x",
     "react-transition-group": "1.2.x",

@@ -109,7 +109,7 @@ class BrowserProcedureEditForm extends React.Component {
           <i className='material-icons'>{this.isActionGlobal(e) ? 'clear' : 'delete'}</i>
         </div>,
         this.isActionGlobal(e)
-          ? <div className='globalizeAction btn-flat disabled'><i className='material-icons'>public</i></div>
+          ? <div className='globalizeAction disabled'><i className='material-icons'>public</i> Global action, cannot be edited here.</div>
           : <div className={cx('globalizeAction btn-flat', waves)} onClick={this.globalizeAction.bind(this, e)}>
             <i className='material-icons'>public</i>
           </div>
@@ -282,7 +282,7 @@ class BrowserProcedureEditForm extends React.Component {
   reorderSequence (event) {
     const detail = event.detail
     console.log('###', detail.startParent, detail.oldElementIndex, detail.elementIndex)
-    // TODO !2: event handling here to store move (https://github.com/lukasoppermann/html5sortable)
+    // TODO !0: event handling here to store move (https://github.com/lukasoppermann/html5sortable)
 
     /*
      passage de idx 0 à 1:
