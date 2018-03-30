@@ -33,7 +33,7 @@ class BrowserProcedureEditForm extends React.Component {
       items: ':not(.add)',
       handle: '.orderHandler',
       forcePlaceholderSize: true
-    })[0].addEventListener('sortupdate', this.reorderSequence.bind(this))
+    }).forEach((e) => e.addEventListener('sortupdate', this.reorderSequence.bind(this)))
   }
 
   componentWillUnmount () {
@@ -109,7 +109,7 @@ class BrowserProcedureEditForm extends React.Component {
           <i className='material-icons'>{this.isActionGlobal(e) ? 'clear' : 'delete'}</i>
         </div>,
         this.isActionGlobal(e)
-          ? <div className='globalizeAction disabled'><i className='material-icons'>public</i> Global action, cannot be edited here.</div>
+          ? <div className='globalizeAction disabled'><i className='material-icons'>public</i> Shared action, cannot be edited here.</div>
           : <div className={cx('globalizeAction btn-flat', waves)} onClick={this.globalizeAction.bind(this, e)}>
             <i className='material-icons'>public</i>
           </div>
