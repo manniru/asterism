@@ -28,6 +28,10 @@ class BrowserWaitEditForm extends React.Component {
 
   plugWidgets () {
     const domSlider = $(`#amount-slider-${this.props.instance.instanceId}`)[0]
+    if (!domSlider) {
+      return
+    }
+
     if (!this._slider || !domSlider.noUiSlider) {
       this._slider = noUiSlider.create(domSlider, {
         start: this.props.instance.data.amount || 1,
@@ -57,13 +61,9 @@ class BrowserWaitEditForm extends React.Component {
         orientation: 'horizontal'
       })
 
-      // FIXME: this._slider.noUiSlider.on('change', this.changeAmount.bind(this))
+      this._slider.on('change', this.changeAmount.bind(this))
     } else {
-      /* this._slider.noUiSlider.set({
-        start: this.props.instance.data.amount
-      }) */
-      console.log('#####2')
-      // TODO !0: update existing slider case, from this.props.instance.data.amount
+      this._slider.set(this.props.instance.data.amount)
     }
   }
 
@@ -71,24 +71,30 @@ class BrowserWaitEditForm extends React.Component {
     // FIXME: replace by <Input name='xxx' type='time' /> from react-materialize when it will work...
     $('.timepicker').pickatime({
       twelvehour: false,
-      autoclose: true
+      autoclose: true,
+      default: this.props.instance.data.until || '12:00',
+      afterHide: this.changeUntil.bind(this),
+      cleartext: 'Now'
     })
   }
 
   render () {
-    const { waitMode } = this.state
     const { instance } = this.props
+    const { waitMode, amountUnit, until, untilOccurrence, untilQuarter } = instance.data
     const timePickerId = uuid.v4()
     return (
       <Row className='section card form waitPanel'>
-        <Input s={12} name='waitMode' type='radio' value='amount' label='Wait a lapse of time' onChange={this.changeWaitMode.bind(this)} checked={waitMode === 'amount'} />
-        <Input s={12} name='waitMode' type='radio' value='until' label='Wait until a specific moment' onChange={this.changeWaitMode.bind(this)} checked={waitMode === 'until'} />
-        <Input s={12} name='waitMode' type='radio' value='untilQuarter' label='Wait until next round quarter' onChange={this.changeWaitMode.bind(this)} checked={waitMode === 'untilQuarter'} />
+        <Input key={0} s={12} label='Mode' type='select' icon={waitMode === 'amount' ? 'timer' : (waitMode === 'until' ? 'timelapse' : 'av_timer')} onChange={this.changeWaitMode.bind(this)}
+          defaultValue={waitMode}>
+          <option key='amount' value='amount'>Wait a lapse of time</option>
+          <option key='until' value='until'>Wait until a specific moment</option>
+          <option key='hours' value='untilQuarter'>Wait until next round quarter</option>
+        </Input>
         <hr className='col s12' />
 
         {waitMode === 'amount' && [
-          <Input key={1} s={12} m={12} l={2} label='Unit' type='select' icon='timelapse' onChange={this.changeAmountUnit.bind(this)}
-            defaultValue={instance.data.amountUnit}>
+          <Input key={1} s={12} m={12} l={2} label='Unit' type='select' icon='timer' onChange={this.changeAmountUnit.bind(this)}
+            defaultValue={amountUnit}>
             <option key='seconds' value='seconds'>seconds</option>
             <option key='minutes' value='minutes'>minutes</option>
             <option key='hours' value='hours'>hours</option>
@@ -99,61 +105,107 @@ class BrowserWaitEditForm extends React.Component {
         ]}
 
         {waitMode === 'until' && [
-          <div key={1} className='input-field col s12 m5 l4'>
-            <input id={timePickerId} type='text' className='timepicker' onChange={this.changeUntil.bind(this)} />
+          <div key={3} className='input-field col s12 m5 l4'>
+            <input id={timePickerId} type='text' className='timepicker' defaultValue={until} onChange={this.changeUntil.bind(this)} />
             <label htmlFor={timePickerId}>Time</label>
           </div>,
-          <Input key={1} s={12} m={7} l={8} label='occurrence' type='select' icon='delete' onChange={this.changeUntilOccurrence.bind(this)}
-            defaultValue={instance.data.amountUnit}>
+          <Input key={4} s={12} m={7} l={8} label='Occurrence' type='select' icon='timelapse' onChange={this.changeUntilOccurrence.bind(this)}
+            defaultValue={untilOccurrence}>
             <option key='first' value='first'>at first occurrence of this moment</option>
             <option key='tomorrow' value='tomorrow'>tomorrow</option>
-          </Input>,
-          <div key={2} className='input-field col s12 m7 l8'>
-            TODO !1: timepicker (hr & min), then sub selector for ''|'tomorrow'
-          </div>
+          </Input>
         ]}
 
         {waitMode === 'untilQuarter' && (
-          <div className='input-field col s12'>
-            TODO !1: selector for 'Xhr00'|'Xhr15'|'Xhr30'|'Xhr45'
-          </div>
+          <Input key={5} s={12} label='Until next occurrence of' type='select' icon='av_timer' onChange={this.changeUntilQuarter.bind(this)}
+            defaultValue={untilQuarter}>
+            <option key='all' value='00/15/30/45'>any round quarter (00/15/30/45)</option>
+            <option key='halfs' value='00/30'>any round half hour (00/30)</option>
+            <option key='HH:00' value='00'>HH:00</option>
+            <option key='HH:15' value='15'>HH:15</option>
+            <option key='HH:30' value='30'>HH:30</option>
+            <option key='HH:45' value='45'>HH:45</option>
+          </Input>
         )}
       </Row>
     )
   }
 
-  changeWaitMode (wtf) {
-    console.log('#######4', wtf)
-    // TODO !0: change instance and state
+  changeWaitMode (event) {
+    const waitMode = event.currentTarget.value
+    this.props.instance.data.waitMode = waitMode
     this.nameChange()
+    this.setState({
+      waitMode
+    })
   }
 
   changeAmountUnit (event) {
-    console.log('#######3', event.currentTarget.value)
-    // TODO !0: change instance
+    const amountUnit = event.currentTarget.value
+    this.props.instance.data.amountUnit = amountUnit
     this.nameChange()
   }
 
-  changeAmount (a, b) {
-    console.log(a, b, '########')
-    // TODO !0
+  changeAmount (value) {
+    const amount = parseInt(value[0].split('.')[0])
+    this.props.instance.data.amount = amount
     this.nameChange()
   }
 
-  changeUntil (wtf) {
-    console.log('#######5', wtf)
-    // TODO !0: change instance
-    this.nameChange()
+  changeUntil () {
+    setTimeout(() => {
+      const element = $('.timepicker')[0]
+      if (element.value !== '') {
+        this.props.instance.data.until = element.value
+      } else {
+        const now = new Date()
+        this.props.instance.data.until = `${now.getHours()}:${`${now.getMinutes()}`.padStart(2, '0')}`
+        this.forceUpdate()
+      }
+      this.nameChange()
+    }, 10)
   }
 
   changeUntilOccurrence (event) {
-    console.log('#######6', event.currentTarget.value)
-    // TODO !0: change instance
+    const untilOccurrence = event.currentTarget.value
+    this.props.instance.data.untilOccurrence = untilOccurrence
+    this.nameChange()
+  }
+
+  changeUntilQuarter (event) {
+    const untilQuarter = event.currentTarget.value
+    this.props.instance.data.untilQuarter = untilQuarter
     this.nameChange()
   }
 
   nameChange () {
-    // TODO !1
+    const data = this.props.instance.data
+    switch (data.waitMode) {
+      case 'amount':
+      default:
+        this.props.instance.data.name = `for ${data.amount} ${data.amountUnit}`
+        break
+      case 'until':
+        this.props.instance.data.name = `until ${data.untilOccurrence === 'tomorrow' ? 'tomorrow' : ''} ${data.until}`
+        break
+      case 'untilQuarter':
+        switch (data.untilQuarter) {
+          case '00/15/30/45':
+          default:
+            this.props.instance.data.name = 'until the next round quarter hour'
+            break
+          case '00/30':
+            this.props.instance.data.name = 'until the next round half hour'
+            break
+          case '00':
+          case '15':
+          case '30':
+          case '45':
+            this.props.instance.data.name = `until the next round quarter (HH:${data.untilQuarter})`
+            break
+        }
+        break
+    }
   }
 }
 
