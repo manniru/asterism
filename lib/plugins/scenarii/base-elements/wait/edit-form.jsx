@@ -69,7 +69,7 @@ class BrowserWaitEditForm extends React.Component {
 
   fixmeReactMaterialize () {
     // FIXME: replace by <Input name='xxx' type='time' /> from react-materialize when it will work...
-    $('.timepicker').pickatime({
+    $(`#until-${this.props.instance.instanceId} .timepicker`).pickatime({
       twelvehour: false,
       autoclose: true,
       default: this.props.instance.data.until || '12:00',
@@ -88,7 +88,7 @@ class BrowserWaitEditForm extends React.Component {
           defaultValue={waitMode}>
           <option key='amount' value='amount'>Wait a lapse of time</option>
           <option key='until' value='until'>Wait until a specific moment</option>
-          <option key='hours' value='untilQuarter'>Wait until next round quarter</option>
+          <option key='hours' value='untilQuarter'>Wait until next round quarter hour</option>
         </Input>
         <hr className='col s12' />
 
@@ -105,7 +105,7 @@ class BrowserWaitEditForm extends React.Component {
         ]}
 
         {waitMode === 'until' && [
-          <div key={3} className='input-field col s12 m5 l4'>
+          <div key={3} className='input-field col s12 m5 l4' id={`until-${instance.instanceId}`}>
             <input id={timePickerId} type='text' className='timepicker' defaultValue={until} onChange={this.changeUntil.bind(this)} />
             <label htmlFor={timePickerId}>Time</label>
           </div>,
@@ -119,7 +119,7 @@ class BrowserWaitEditForm extends React.Component {
         {waitMode === 'untilQuarter' && (
           <Input key={5} s={12} label='Until next occurrence of' type='select' icon='av_timer' onChange={this.changeUntilQuarter.bind(this)}
             defaultValue={untilQuarter}>
-            <option key='all' value='00/15/30/45'>any round quarter (00/15/30/45)</option>
+            <option key='all' value='00/15/30/45'>any round quarter hour (00/15/30/45)</option>
             <option key='halfs' value='00/30'>any round half hour (00/30)</option>
             <option key='HH:00' value='00'>HH:00</option>
             <option key='HH:15' value='15'>HH:15</option>
@@ -154,13 +154,13 @@ class BrowserWaitEditForm extends React.Component {
 
   changeUntil () {
     setTimeout(() => {
-      const element = $('.timepicker')[0]
+      const element = $(`#until-${this.props.instance.instanceId} .timepicker`)[0]
       if (element.value !== '') {
         this.props.instance.data.until = element.value
       } else {
         const now = new Date()
         this.props.instance.data.until = `${now.getHours()}:${`${now.getMinutes()}`.padStart(2, '0')}`
-        this.forceUpdate()
+        $(`#until-${this.props.instance.instanceId} .timepicker`).val(this.props.instance.data.until)
       }
       this.nameChange()
     }, 10)
@@ -186,7 +186,7 @@ class BrowserWaitEditForm extends React.Component {
         this.props.instance.data.name = `for ${data.amount} ${data.amountUnit}`
         break
       case 'until':
-        this.props.instance.data.name = `until ${data.untilOccurrence === 'tomorrow' ? 'tomorrow' : ''} ${data.until}`
+        this.props.instance.data.name = `until ${data.untilOccurrence === 'tomorrow' ? 'tomorrow at' : ''} ${data.until}`
         break
       case 'untilQuarter':
         switch (data.untilQuarter) {

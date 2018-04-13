@@ -109,6 +109,8 @@
     "joi-browser": "13.x",
     "jquery": "3.x",
     "materialize-css": "0.100.2",
+    "moment": "^2.22.0",
+    "moment-timer": "^1.2.3",
     "node-sass": "4.6.x",
     "nosql": "6.1.x",
     "object-path": "0.11.x",
