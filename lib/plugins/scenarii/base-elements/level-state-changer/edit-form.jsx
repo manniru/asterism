@@ -27,6 +27,7 @@ class BrowserLevelStateChangerEditForm extends React.Component {
   render () {
     const { instance, animationLevel, theme, services } = this.props
 
+    // TODO !1: change slider to noUiSlider like wait action
     return (
       <Row className='section card form'>
         <div className='col s12 m9'>

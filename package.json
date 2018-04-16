@@ -1,6 +1,6 @@
 {
   "name": "asterism",
-  "version": "0.16.0",
+  "version": "0.16.2",
   "description": "Extensible & dynamic dashboard platform",
   "author": "Xavier Gouley <gxapplications@gmail.com>",
   "contributors": [],
@@ -84,7 +84,7 @@
   ],
   "dependencies": {
     "annyang": "^2.6.0",
-    "asterism-plugin-library": ">= 1.11.2",
+    "asterism-plugin-library": ">= 1.11.3",
     "babel-loader": "7.1.4",
     "babel-plugin-css-modules-transform": "1.5.0",
     "babel-plugin-transform-object-rest-spread": "6.23.x",
@@ -103,7 +103,7 @@
     "extract-text-webpack-plugin": "3.x",
     "felicity": "2.4.x",
     "file-loader": "0.11.x",
-    "html5sortable": "0.8.x",
+    "html5sortable": "0.9.x",
     "imports-loader": "0.7.x",
     "joi": "13.x",
     "joi-browser": "13.x",

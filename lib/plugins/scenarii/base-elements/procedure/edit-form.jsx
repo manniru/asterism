@@ -1,5 +1,6 @@
 'use strict'
 
+/* global $ */
 import cx from 'classnames'
 import Joi from 'joi'
 import PropTypes from 'prop-types'
@@ -225,7 +226,8 @@ class BrowserProcedureEditForm extends React.Component {
   }
 
   addScript (sequence) {
-    sequence.push({ 'a': [] })
+    const key = uuid.v4()
+    sequence.push({ [key]: [] })
     this.forceUpdate()
   }
 
@@ -281,15 +283,21 @@ class BrowserProcedureEditForm extends React.Component {
 
   reorderSequence (event) {
     const detail = event.detail
-    console.log('###', detail.startParent, detail.oldElementIndex, detail.elementIndex)
-    // TODO !0: event handling here to store move (https://github.com/lukasoppermann/html5sortable)
+    const elementIndex = detail.destination.elementIndex
+    const oldElementIndex = detail.origin.elementIndex
+    const sequenceKey = $(detail.destination.container).attr('data-sequenceKey')
+    const sequencePath = Array.from($(detail.destination.container).parents('ol')).reduce((acc, parent) => {
+      acc.unshift($(parent).attr('data-sequenceKey'))
+      return acc
+    }, [sequenceKey])
+    const sequenceObject = sequencePath.reduce((seq, sequenceKey) => {
+      const script = seq.find((seq) => !!seq[sequenceKey])
+      seq = script[sequenceKey]
+      return seq
+    }, [this.props.instance.data.script])
 
-    /*
-     passage de idx 0 à 1:
-     oldElementIndex: 0
-     elementIndex: 2 (its a bug). Consider 1
-     ==> if (oldElementIndex < elementIndex) { array.splice(elementIndex + 1, 0, e); array.splice(oldElementIndex, 1); } else { ??? }
-    */
+    const itemToMove = sequenceObject.splice(oldElementIndex, 1)
+    sequenceObject.splice(elementIndex, 0, itemToMove[0])
   }
 
   _deleteConfirm (element) {

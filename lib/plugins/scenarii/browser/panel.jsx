@@ -64,6 +64,7 @@ class ScenariiEditPanel extends React.Component {
               createInstance={this.scenariiService.createActionInstance.bind(this.scenariiService)}
               deleteInstance={this.scenariiService.deleteActionInstance.bind(this.scenariiService)}
               testInstance={this.scenariiService.executeActionInstance.bind(this.scenariiService)}
+              abortInstance={this.scenariiService.abortActionInstance.bind(this.scenariiService)}
               applyEditForm={this.applyEditForm.bind(this)}
               ref={(c) => { this._tabs[2] = c }}>
               <div className='collection-header'>
