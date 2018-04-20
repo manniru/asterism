@@ -15,7 +15,7 @@ class BrowserActionAborterEditForm extends React.Component {
   }
 
   componentDidMount () {
-    this.scenariiService.getAcctionInstances()
+    this.scenariiService.getActionInstances()
     .then((instances) => {
       if (instances.length === 1) {
         this.props.instance.data.actionId = instances[0].instanceId

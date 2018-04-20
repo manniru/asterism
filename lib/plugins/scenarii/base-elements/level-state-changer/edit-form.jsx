@@ -1,5 +1,6 @@
 'use strict'
 
+/* global $, noUiSlider, wNumb */
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Input, Row } from 'react-materialize'
@@ -22,12 +23,54 @@ class BrowserLevelStateChangerEditForm extends React.Component {
         this.nameChange()
       }
     })
+    this.plugWidgets()
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    this.plugWidgets()
+  }
+
+  plugWidgets () {
+    const domSlider = $(`#amount-slider-${this.props.instance.instanceId}`)[0]
+    if (!domSlider) {
+      return
+    }
+
+    if (!this._slider || !domSlider.noUiSlider) {
+      this._slider = noUiSlider.create(domSlider, {
+        start: this.props.instance.data.amount || 1,
+        connect: true,
+        step: 1,
+        animate: true,
+        range: {
+          'min': [1],
+          '70%': [10, 6],
+          '80%': [16, 16],
+          'max': [32]
+        },
+        format: wNumb({
+          decimals: 1
+        }),
+        pips: { // Show a scale with the slider
+          mode: 'steps',
+          stepped: true,
+          density: 4
+        },
+        tooltips: wNumb({ decimals: 1, edit: (v) => `${v}`.split('.')[0] }), // decimals: 0 does not work...
+        behaviour: 'tap-drag',
+        orientation: 'horizontal'
+      })
+
+      this._slider.on('change', this.amountChanged.bind(this))
+    } else {
+      this._slider.set(this.props.instance.data.amount)
+    }
   }
 
   render () {
     const { instance, animationLevel, theme, services } = this.props
 
-    // TODO !1: change slider to noUiSlider like wait action
+    // TODO !1: change slider to noUiSlider like wait action: test it !
     return (
       <Row className='section card form'>
         <div className='col s12 m9'>
@@ -43,23 +86,8 @@ class BrowserLevelStateChangerEditForm extends React.Component {
         </Input>
 
         <div className='col s12'>Operation value: {instance.data.amount}</div>
-        <div className='range-field col s12'>
-          <input type='range' list='amount' min='1' max='32' onChange={this.amountChanged.bind(this)}
-            defaultValue={instance.data.amount} />
-          <datalist id='amount'>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            <option>16</option>
-            <option>32</option>
-          </datalist>
+        <div className='col s12 slider'>
+          <div id={`amount-slider-${instance.instanceId}`} />
         </div>
       </Row>
     )
@@ -76,8 +104,8 @@ class BrowserLevelStateChangerEditForm extends React.Component {
     this.nameChange()
   }
 
-  amountChanged (event) {
-    const amount = event.currentTarget.value
+  amountChanged (value) {
+    const amount = parseInt(value[0].split('.')[0])
     this.props.instance.data.amount = amount
     this.nameChange()
   }
