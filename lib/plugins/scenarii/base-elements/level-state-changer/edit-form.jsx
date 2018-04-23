@@ -44,8 +44,8 @@ class BrowserLevelStateChangerEditForm extends React.Component {
         animate: true,
         range: {
           'min': [1],
-          '70%': [10, 6],
-          '80%': [16, 16],
+          '81%': [10, 6],
+          '91%': [16, 16],
           'max': [32]
         },
         format: wNumb({
@@ -54,7 +54,7 @@ class BrowserLevelStateChangerEditForm extends React.Component {
         pips: { // Show a scale with the slider
           mode: 'steps',
           stepped: true,
-          density: 4
+          density: 8
         },
         tooltips: wNumb({ decimals: 1, edit: (v) => `${v}`.split('.')[0] }), // decimals: 0 does not work...
         behaviour: 'tap-drag',
@@ -70,10 +70,9 @@ class BrowserLevelStateChangerEditForm extends React.Component {
   render () {
     const { instance, animationLevel, theme, services } = this.props
 
-    // TODO !1: change slider to noUiSlider like wait action: test it !
     return (
-      <Row className='section card form'>
-        <div className='col s12 m9'>
+      <Row className='section card form levelStateChangerPanel'>
+        <div className='col s12'>
           <StatesDropdown defaultStateId={instance.data.levelStateId} onChange={this.levelStateChanged.bind(this)}
             theme={theme} animationLevel={animationLevel} services={services} />
         </div>
@@ -85,8 +84,7 @@ class BrowserLevelStateChangerEditForm extends React.Component {
           <option key='decrement' value='decrement'>Decrement value</option>
         </Input>
 
-        <div className='col s12'>Operation value: {instance.data.amount}</div>
-        <div className='col s12 slider'>
+        <div className='col s12 m9 slider'>
           <div id={`amount-slider-${instance.instanceId}`} />
         </div>
       </Row>
