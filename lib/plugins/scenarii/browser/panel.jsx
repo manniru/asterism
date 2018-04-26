@@ -39,7 +39,21 @@ class ScenariiEditPanel extends React.Component {
       <div id='scenarii-edit-panel' className={cx({ 'editFormOpened': !!EditForm }, 'coloring-header-tabs thin-scrollable ScenariiEditPanel', styles.ScenariiEditPanel)}>
         <Tabs onChange={this.tabChanged.bind(this)}>
           <Tab title={(<span><Icon>offline_pin</Icon> <span className='hide-on-small-only'>Scenarii</span></span>)} active={currentTab === 0}>
-            <div ref={(c) => { this._tabs[0] = c }}>Scenarii, to do...</div>
+            <PanelList theme={theme} animationLevel={animationLevel}
+              getInstances={this.scenariiService.getScenarioInstances.bind(this.scenariiService)}
+              getTypes={this.scenariiService.getScenarioTypes.bind(this.scenariiService)}
+              createInstance={this.scenariiService.createScenarioInstance.bind(this.scenariiService)}
+              deleteInstance={this.scenariiService.deleteScenarioInstance.bind(this.scenariiService)}
+              testInstance={this.scenariiService.forceTriggerScenarioInstance.bind(this.scenariiService)}
+              abortInstance={this.scenariiService.forceAbortScenarioInstance.bind(this.scenariiService)}
+              applyEditForm={this.applyEditForm.bind(this)}
+              ref={(c) => { this._tabs[0] = c }}>
+              <div className='collection-header'>
+                <Icon>lightbulb_outline</Icon>
+                No scenario yet. You can add one choosing a scenario type below.<br />
+                A scenario is a complex structure you can trigger or (de)activate. Most common scenario will be triggered by an event to run an action.
+              </div>
+            </PanelList>
           </Tab>
           <Tab title={(<span><Icon>help</Icon> <span className='hide-on-small-only'>Conditions</span></span>)} active={currentTab === 1}>
             <PanelList theme={theme} animationLevel={animationLevel}
