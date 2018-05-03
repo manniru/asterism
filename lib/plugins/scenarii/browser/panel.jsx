@@ -22,10 +22,27 @@ class ScenariiEditPanel extends React.Component {
       EditForm: null,
       currentTab: 0
     }
+
+    this._listenerId = null
   }
 
   componentDidMount () {
     $('#scenarii-edit-panel.coloring-header-tabs div.row > div.col:first-of-type').addClass(this.props.theme.backgrounds.editing)
+    this._listenerId = this.scenariiService.addScenariiListener((event, instance) => {
+      switch (event) {
+        case 'scenarioActivationChanged':
+          if (this._tabs[0]) {
+            this._tabs[0].forceUpdate()
+          }
+      }
+    })
+  }
+
+  componentWillUnmount () {
+    if (this._listenerId) {
+      this.scenariiService.removeScenariiListener(this._listenerId)
+      delete this._listenerId
+    }
   }
 
   shouldComponentUpdate (nextState) {
@@ -46,6 +63,7 @@ class ScenariiEditPanel extends React.Component {
               deleteInstance={this.scenariiService.deleteScenarioInstance.bind(this.scenariiService)}
               testInstance={this.scenariiService.forceTriggerScenarioInstance.bind(this.scenariiService)}
               abortInstance={this.scenariiService.forceAbortScenarioInstance.bind(this.scenariiService)}
+              activateInstance={this.scenariiService.setActivationScenarioInstance.bind(this.scenariiService)}
               applyEditForm={this.applyEditForm.bind(this)}
               ref={(c) => { this._tabs[0] = c }}>
               <div className='collection-header'>
